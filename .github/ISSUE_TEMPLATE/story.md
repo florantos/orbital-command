@@ -1,7 +1,7 @@
+---
 name: Story
 about: A vertical slice of functionality
 labels: story
-
 ---
 
 ## Story [N.N] — [Name]

@@ -1,7 +1,7 @@
+---
 name: Epic
 about: A capability-based group of related stories
 labels: epic
-
 ---
 
 ## Epic [N] — [Name]
