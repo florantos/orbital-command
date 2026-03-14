@@ -11,10 +11,19 @@ type Config struct {
 	Port        string
 	LogLevel    string
 	DatabaseURL string
+	Env         string
 }
 
 func Load() (Config, error) {
 	_ = godotenv.Load() // ignore this error: no env file in prod
+
+	env, ok := os.LookupEnv("APP_ENV")
+	if !ok {
+		return Config{}, fmt.Errorf("cannot find env variable APP_ENV")
+	}
+	if env == "" {
+		return Config{}, fmt.Errorf("env variable APP_ENV is empty")
+	}
 
 	port, ok := os.LookupEnv("PORT")
 	if !ok {
@@ -41,6 +50,7 @@ func Load() (Config, error) {
 		Port:        port,
 		LogLevel:    logLevel,
 		DatabaseURL: url,
+		Env:         env,
 	}
 
 	return cfg, nil
