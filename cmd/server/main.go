@@ -27,5 +27,4 @@ func main() {
 		logger.Error("server failed", "error", err)
 		os.Exit(1)
 	}
-
 }
