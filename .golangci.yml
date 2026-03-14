@@ -8,6 +8,10 @@ linters:
     - staticcheck
     - unused
     - ineffassign
+  settings:
+    errcheck:
+      exclude-functions:
+        - (net/http.ResponseWriter).Write
 
 formatters:
   enable:
