@@ -74,6 +74,11 @@
   --color-sev-high: var(--color-orange);
   --color-sev-medium: var(--color-amber);
   --color-sev-low: var(--color-blue);
+
+  /* ── Breakpoint Tokens ── */
+  --breakpoint-mobile: 640px;
+  --breakpoint-tablet: 1279px;
+  --breakpoint-desktop: 1280px;
 }
 
 body {
