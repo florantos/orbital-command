@@ -1,0 +1,86 @@
+@import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap");
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  /* ── Color Primitives ── */
+  --color-green: #00ff88;
+  --color-green-dim: rgba(0, 255, 136, 0.08);
+  --color-amber: #ffab00;
+  --color-amber-dim: rgba(255, 171, 0, 0.08);
+  --color-orange: #ff8c00;
+  --color-red: #ff3d5a;
+  --color-red-dim: rgba(255, 61, 90, 0.08);
+  --color-slate: #556677;
+  --color-slate-dim: rgba(85, 102, 119, 0.08);
+  --color-purple: #cc44ff;
+  --color-purple-dim: rgba(204, 68, 255, 0.08);
+  --color-cyan: #00e5ff;
+  --color-cyan-dim: rgba(0, 229, 255, 0.08);
+  --color-cyan-mid: rgba(0, 229, 255, 0.25);
+  --color-blue: #4488ff;
+
+  /* ── Surface Primitives ── */
+  --surface-bg: #020810;
+  --surface-panel: rgba(8, 24, 48, 0.6);
+  --surface-panel-border: rgba(80, 180, 255, 0.12);
+  --surface-panel-glow: rgba(80, 180, 255, 0.04);
+  --surface-glass: rgba(12, 32, 60, 0.5);
+
+  /* ── Text Primitives ── */
+  --text-bright: #e8f4ff;
+  --text-mid: #8eaacc;
+  --text-dim: #3d5570;
+
+  /* ── Typography Primitives ── */
+  --font-head: "Rajdhani", sans-serif;
+  --font-data: "Share Tech Mono", monospace;
+
+  /* ── Spacing Primitives ── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ── Motion Primitives ── */
+  --transition-fast: 120ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 350ms ease;
+
+  /* ── Health Semantic Tokens ── */
+  --color-health-operational: var(--color-green);
+  --color-health-operational-dim: var(--color-green-dim);
+  --color-health-degraded: var(--color-amber);
+  --color-health-degraded-dim: var(--color-amber-dim);
+  --color-health-critical: var(--color-red);
+  --color-health-critical-dim: var(--color-red-dim);
+  --color-health-offline: var(--color-slate);
+  --color-health-offline-dim: var(--color-slate-dim);
+  --color-health-unresponsive: var(--color-purple);
+  --color-health-unresponsive-dim: var(--color-purple-dim);
+
+  /* ── Severity Semantic Tokens ── */
+  --color-sev-critical: var(--color-red);
+  --color-sev-high: var(--color-orange);
+  --color-sev-medium: var(--color-amber);
+  --color-sev-low: var(--color-blue);
+}
+
+body {
+  background: var(--surface-bg);
+  color: var(--text-bright);
+  font-family: var(--font-head);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
