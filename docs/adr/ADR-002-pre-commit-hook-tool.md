@@ -16,7 +16,7 @@ Use Lefthook for pre-commit hooks for both backend and frontend.
 **Husky**
 
 - Pros: Large ecosystem, simple setup, familar to most developers
-- Cons: Javascript/Node specific (doesn't workout outside of JS/Node projects), slower than Lefthook, one file per hook
+- Cons: Javascript/Node specific (doesn't work outside of JS/Node projects), slower than Lefthook, one file per hook
 
 **Lefthook**
 
@@ -32,4 +32,4 @@ Our project needs a way to enforce code quality in the backend and the frontend.
 - Lefthook is less known so there is a small learning curve
 - lefthook is younger and has a smaller ecosystem
 - Hooks run in parallel so pre-commit checks are faster
-- No Node depency required to runk hooks
+- No Node depency required to run hooks
