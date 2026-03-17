@@ -1,9 +1,10 @@
 import js from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier";
 import jsxA11y from "eslint-plugin-jsx-a11y";
-import react from "eslint-plugin-react";
+import reactDom from "eslint-plugin-react-dom";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
+import reactX from "eslint-plugin-react-x";
 import { defineConfig, globalIgnores } from "eslint/config";
 import globals from "globals";
 import tseslint from "typescript-eslint";
@@ -14,22 +15,21 @@ export default defineConfig([
     files: ["**/*.{ts,tsx}"],
     extends: [
       js.configs.recommended,
-      tseslint.configs.recommended,
+      tseslint.configs.strictTypeChecked,
+      tseslint.configs.stylisticTypeChecked,
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
-      react.configs.flat.recommended,
-      react.configs.flat["jsx-runtime"],
+      reactX.configs["recommended-typescript"],
+      reactDom.configs.recommended,
       jsxA11y.flatConfigs.recommended,
     ],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
-    },
-    settings: {
-      react: { version: "detect" },
-    },
-    rules: {
-      "react/prop-types": "off",
+      parserOptions: {
+        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
   },
   eslintConfigPrettier,
