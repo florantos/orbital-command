@@ -1,0 +1,11 @@
+pre-commit:
+  parallel: true
+  commands:
+    backend-lint:
+      root: "backend/"
+      glob: "*.go"
+      run: golangci-lint run ./...
+    frontend-lint:
+      root: "frontend/"
+      glob: "*.{ts,tsx}"
+      run: pnpm lint
