@@ -7,5 +7,13 @@ pre-commit:
       run: golangci-lint run ./...
     frontend-lint:
       root: "frontend/"
+      glob: "*.{ts,tsx,js,jsx}"
+      run: npx eslint .
+    frontend-format:
+      root: "frontend/"
+      glob: "*.{ts,tsx,js,json,css,md,yaml,yml}"
+      run: npx prettier --check .
+    frontend-types:
+      root: "frontend/"
       glob: "*.{ts,tsx}"
-      run: pnpm lint
+      run: npx tsc --noEmit
