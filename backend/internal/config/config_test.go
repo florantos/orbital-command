@@ -111,7 +111,6 @@ func TestLoad(t *testing.T) {
 
 			if tt.expectError {
 				require.Error(t, err)
-
 				assert.EqualError(t, err, tt.expectedErrMsg)
 				return
 			}
@@ -119,9 +118,7 @@ func TestLoad(t *testing.T) {
 			require.NoError(t, err)
 
 			assert.Equal(t, tt.envVars["APP_ENV"], cfg.Env)
-
 			assert.Equal(t, tt.envVars["PORT"], cfg.Port)
-
 			assert.Equal(t, tt.envVars["DATABASE_URL"], cfg.DatabaseURL)
 
 			if tt.expectedLogLevel != "" {
