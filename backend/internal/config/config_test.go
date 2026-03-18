@@ -5,6 +5,8 @@ import (
 	"testing"
 
 	"github.com/florantos/orbital-command/internal/config"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestLoad(t *testing.T) {
@@ -97,9 +99,8 @@ func TestLoad(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// defensive: unset vars to account for shell env vars
 			for _, key := range []string{"PORT", "APP_ENV", "DATABASE_URL", "LOG_LEVEL"} {
-				if err := os.Unsetenv(key); err != nil {
-					t.Fatalf("failed to unset env var %s: %v", key, err)
-				}
+				err := os.Unsetenv(key)
+				require.NoError(t, err)
 			}
 
 			for key, val := range tt.envVars {
@@ -109,32 +110,23 @@ func TestLoad(t *testing.T) {
 			cfg, err := config.Load()
 
 			if tt.expectError {
-				if err == nil {
-					t.Error("expected error but got nil")
-					return
-				}
-				if tt.expectedErrMsg != "" && err.Error() != tt.expectedErrMsg {
-					t.Errorf("expected error message %q, got %q", tt.expectedErrMsg, err.Error())
-				}
+				require.Error(t, err)
+
+				assert.EqualError(t, err, tt.expectedErrMsg)
 				return
 			}
 
-			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
-			}
+			require.NoError(t, err)
 
-			if cfg.Env != tt.envVars["APP_ENV"] {
-				t.Errorf("expected app env %s, got %s", tt.envVars["APP_ENV"], cfg.Env)
-			}
-			if cfg.Port != tt.envVars["PORT"] {
-				t.Errorf("expected port %s, got %s", tt.envVars["PORT"], cfg.Port)
-			}
-			if cfg.DatabaseURL != tt.envVars["DATABASE_URL"] {
-				t.Errorf("expected database url %s, got %s", tt.envVars["DATABASE_URL"], cfg.DatabaseURL)
-			}
+			assert.Equal(t, tt.envVars["APP_ENV"], cfg.Env)
 
-			if tt.expectedLogLevel != "" && cfg.LogLevel != tt.expectedLogLevel {
-				t.Errorf("expected log level %s, got %s", tt.expectedLogLevel, cfg.LogLevel)
+			assert.Equal(t, tt.envVars["PORT"], cfg.Port)
+
+			assert.Equal(t, tt.envVars["DATABASE_URL"], cfg.DatabaseURL)
+
+			if tt.expectedLogLevel != "" {
+				assert.Equal(t, tt.expectedLogLevel, cfg.LogLevel)
+
 			}
 
 		})
