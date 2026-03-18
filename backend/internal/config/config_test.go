@@ -9,41 +9,45 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestLoad(t *testing.T) {
+func TestLoad_ValidConfig(t *testing.T) {
+	envVars := map[string]string{
+		"PORT":         "8080",
+		"APP_ENV":      "development",
+		"DATABASE_URL": "postgres://user:password@localhost:5432/orbital_command",
+	}
+
+	// defensive: unset vars to account for shell env vars
+	for _, key := range []string{"PORT", "APP_ENV", "DATABASE_URL", "LOG_LEVEL"} {
+		err := os.Unsetenv(key)
+		require.NoError(t, err)
+	}
+
+	for key, val := range envVars {
+		t.Setenv(key, val)
+	}
+
+	cfg, err := config.Load()
+
+	require.NoError(t, err)
+
+	assert.Equal(t, envVars["APP_ENV"], cfg.Env)
+	assert.Equal(t, envVars["PORT"], cfg.Port)
+	assert.Equal(t, envVars["DATABASE_URL"], cfg.DatabaseURL)
+}
+
+func TestLoad_MissingRequiredVars(t *testing.T) {
 	tests := []struct {
-		name             string
-		envVars          map[string]string
-		expectError      bool
-		expectedErrMsg   string
-		expectedLogLevel string
+		name        string
+		envVars     map[string]string
+		expectedErr string
 	}{
 		{
-			name: "valid config loads successfully",
-			envVars: map[string]string{
-				"PORT":         "8080",
-				"APP_ENV":      "development",
-				"DATABASE_URL": "postgres://user:password@localhost:5432/orbital_command",
-			},
-			expectError: false,
-		},
-		{
-			name: "missing ENV_VAR returns error",
+			name: "missing APP_ENV returns error",
 			envVars: map[string]string{
 				"PORT":         "8080",
 				"DATABASE_URL": "postgres://user:password@localhost:5432/orbital_command",
 			},
-			expectError:    true,
-			expectedErrMsg: "cannot find env variable APP_ENV",
-		},
-		{
-			name: "empty ENV_VAR returns error",
-			envVars: map[string]string{
-				"PORT":         "8080",
-				"APP_ENV":      "",
-				"DATABASE_URL": "postgres://user:password@localhost:5432/orbital_command",
-			},
-			expectError:    true,
-			expectedErrMsg: "env variable APP_ENV is empty",
+			expectedErr: "cannot find env variable APP_ENV",
 		},
 		{
 			name: "missing PORT returns error",
@@ -51,18 +55,7 @@ func TestLoad(t *testing.T) {
 				"APP_ENV":      "development",
 				"DATABASE_URL": "postgres://user:password@localhost:5432/orbital_command",
 			},
-			expectError:    true,
-			expectedErrMsg: "cannot find env variable PORT",
-		},
-		{
-			name: "empty PORT returns error",
-			envVars: map[string]string{
-				"PORT":         "",
-				"APP_ENV":      "development",
-				"DATABASE_URL": "postgres://user:password@localhost:5432/orbital_command",
-			},
-			expectError:    true,
-			expectedErrMsg: "env variable PORT is empty",
+			expectedErr: "cannot find env variable PORT",
 		},
 		{
 			name: "missing DATABASE_URL returns error",
@@ -70,28 +63,7 @@ func TestLoad(t *testing.T) {
 				"PORT":    "8080",
 				"APP_ENV": "development",
 			},
-			expectError:    true,
-			expectedErrMsg: "cannot find env variable DATABASE_URL",
-		},
-		{
-			name: "empty DATABASE_URL returns error",
-			envVars: map[string]string{
-				"PORT":         "8080",
-				"APP_ENV":      "development",
-				"DATABASE_URL": "",
-			},
-			expectError:    true,
-			expectedErrMsg: "env variable DATABASE_URL is empty",
-		},
-		{
-			name: "LOG_LEVEL defaults to info when not set",
-			envVars: map[string]string{
-				"PORT":         "8080",
-				"APP_ENV":      "development",
-				"DATABASE_URL": "postgres://user:password@localhost:5432/orbital_command",
-			},
-			expectError:      false,
-			expectedLogLevel: "info",
+			expectedErr: "cannot find env variable DATABASE_URL",
 		},
 	}
 
@@ -107,24 +79,112 @@ func TestLoad(t *testing.T) {
 				t.Setenv(key, val)
 			}
 
-			cfg, err := config.Load()
+			_, err := config.Load()
 
-			if tt.expectError {
-				require.Error(t, err)
-				assert.EqualError(t, err, tt.expectedErrMsg)
-				return
+			assert.EqualError(t, err, tt.expectedErr)
+		})
+	}
+}
+
+func TestLoad_EmptyRequiredVars(t *testing.T) {
+	tests := []struct {
+		name        string
+		envVars     map[string]string
+		expectedErr string
+	}{
+		{
+
+			name: "empty APP_ENV returns error",
+			envVars: map[string]string{
+				"PORT":         "8080",
+				"APP_ENV":      "",
+				"DATABASE_URL": "postgres://user:password@localhost:5432/orbital_command",
+			},
+			expectedErr: "env variable APP_ENV is empty",
+		},
+		{
+			name: "empty PORT returns error",
+			envVars: map[string]string{
+				"PORT":         "",
+				"APP_ENV":      "development",
+				"DATABASE_URL": "postgres://user:password@localhost:5432/orbital_command",
+			},
+			expectedErr: "env variable PORT is empty",
+		},
+		{
+			name: "empty DATABASE_URL returns error",
+			envVars: map[string]string{
+				"PORT":         "8080",
+				"APP_ENV":      "development",
+				"DATABASE_URL": "",
+			},
+			expectedErr: "env variable DATABASE_URL is empty",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// defensive: unset vars to account for shell env vars
+			for _, key := range []string{"PORT", "APP_ENV", "DATABASE_URL", "LOG_LEVEL"} {
+				err := os.Unsetenv(key)
+				require.NoError(t, err)
 			}
+
+			for key, val := range tt.envVars {
+				t.Setenv(key, val)
+			}
+
+			_, err := config.Load()
+
+			assert.EqualError(t, err, tt.expectedErr)
+		})
+	}
+
+}
+
+func TestLoad_DefaultLogLevel(t *testing.T) {
+	tests := []struct {
+		name    string
+		envVars map[string]string
+	}{
+
+		{
+			name: "LOG_LEVEL defaults to info when not set",
+			envVars: map[string]string{
+				"PORT":         "8080",
+				"APP_ENV":      "development",
+				"DATABASE_URL": "postgres://user:password@localhost:5432/orbital_command",
+			},
+		},
+		{
+			name: "LOG_LEVEL defaults to info when empty",
+			envVars: map[string]string{
+				"PORT":         "8080",
+				"APP_ENV":      "development",
+				"DATABASE_URL": "postgres://user:password@localhost:5432/orbital_command",
+				"LOG_LEVEL":    "",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			// defensive: unset vars to account for shell env vars
+			for _, key := range []string{"PORT", "APP_ENV", "DATABASE_URL", "LOG_LEVEL"} {
+				err := os.Unsetenv(key)
+				require.NoError(t, err)
+			}
+
+			for key, val := range tt.envVars {
+				t.Setenv(key, val)
+			}
+
+			cfg, err := config.Load()
 
 			require.NoError(t, err)
 
-			assert.Equal(t, tt.envVars["APP_ENV"], cfg.Env)
-			assert.Equal(t, tt.envVars["PORT"], cfg.Port)
-			assert.Equal(t, tt.envVars["DATABASE_URL"], cfg.DatabaseURL)
-
-			if tt.expectedLogLevel != "" {
-				assert.Equal(t, tt.expectedLogLevel, cfg.LogLevel)
-
-			}
+			assert.Equal(t, "info", cfg.LogLevel)
 
 		})
 	}
