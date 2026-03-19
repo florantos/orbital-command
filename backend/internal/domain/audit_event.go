@@ -8,10 +8,10 @@ type AuditEvent struct {
 	ID         string
 	Action     string
 	EntityType string
-	EntityId   string
+	EntityID   string
 	Actor      string
 	Detail     string
-	OccuredAt  time.Time
+	OccurredAt time.Time
 }
 
 func NewAuditEvent(action, entityType, entityId, actor, detail string) *AuditEvent {
@@ -19,7 +19,7 @@ func NewAuditEvent(action, entityType, entityId, actor, detail string) *AuditEve
 	return &AuditEvent{
 		Action:     action,
 		EntityType: entityType,
-		EntityId:   entityId,
+		EntityID:   entityId,
 		Actor:      actor,
 		Detail:     detail,
 	}
