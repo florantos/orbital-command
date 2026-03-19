@@ -1,9 +1,17 @@
-.PHONY: dev down clean test lint-backend lint-frontend lint
-
 ifneq (,$(wildcard ./.env))
   include .env
   export
 endif
+
+.PHONY: help dev down clean test lint
+
+help:
+	@echo "Available commands:"
+	@echo "  make dev     Start the full stack"
+	@echo "  make down    Stop containers, keep data"
+	@echo "  make clean   Stop containers, wipe data"
+	@echo "  make test    Run backend tests"
+	@echo "  make lint    Run backend linter"
 
 dev:
 	docker compose up
@@ -14,13 +22,8 @@ down:
 clean:
 	docker compose down -v
 
-test-backend:
-	@if [ -f .env ]; then source .env; fi && cd backend && go test ./...
+test:
+	cd backend && go test ./...
 
-lint-backend:
+lint:
 	cd backend && golangci-lint run ./...
-
-lint-frontend:
-	cd frontend && pnpm lint
-
-lint: lint-backend lint-frontend
