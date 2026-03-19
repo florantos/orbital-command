@@ -12,7 +12,7 @@ func TestNewAuditEvent_ValidAuditEventCreatesSuccessfully(t *testing.T) {
 
 	assert.Equal(t, "module.registered", av.Action)
 	assert.Equal(t, "module", av.EntityType)
-	assert.Equal(t, "abc-123", av.EntityId)
+	assert.Equal(t, "abc-123", av.EntityID)
 	assert.Equal(t, "Commander Chen", av.Actor)
 	assert.Equal(t, "Registered module: Navigation Array", av.Detail)
 

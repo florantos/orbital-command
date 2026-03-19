@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestModuleRepo_Create_PersistsAndReturnsModuleWithId(t *testing.T) {
+func TestModuleRepo_Create_PersistsAndReturnsModule(t *testing.T) {
 	pool := testutil.NewTestPool(t)
 	tx := testutil.NewTestTx(t, pool)
 	repo := repository.NewModuleRepo(tx)
