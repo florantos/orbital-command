@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -18,13 +19,15 @@ const (
 )
 
 type Module struct {
-	ID          int
+	ID          string
 	Name        string
 	Description string
 	HealthState HealthState
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
+
+var ErrDuplicateModuleName = errors.New("duplicate module name")
 
 func NewModule(name, description string) (*Module, error) {
 	name = strings.TrimSpace(name)
