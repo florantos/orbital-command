@@ -1,5 +1,10 @@
 .PHONY: dev down clean test lint-backend lint-frontend lint
 
+ifneq (,$(wildcard ./.env))
+  include .env
+  export
+endif
+
 dev:
 	docker compose up
 
