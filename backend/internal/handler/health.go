@@ -13,7 +13,7 @@ func (h *Handler) Health(w http.ResponseWriter, r *http.Request) {
 	resBody, err := json.Marshal(healthResponse{Status: "ok"})
 	if err != nil {
 		h.logger.Error("failed to encode health response", "error", err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		writeError(w, http.StatusInternalServerError, "internal server error")
 		return
 	}
 

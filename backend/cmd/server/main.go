@@ -17,7 +17,7 @@ func main() {
 	}
 
 	logger := applogger.New(cfg.LogLevel, cfg.Env)
-	h := handler.NewHandler(logger)
+	h := handler.NewHandler(logger, nil)
 
 	http.HandleFunc("/health", h.Health)
 
