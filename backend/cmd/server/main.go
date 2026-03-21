@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
@@ -8,6 +9,8 @@ import (
 	"github.com/florantos/orbital-command/internal/config"
 	"github.com/florantos/orbital-command/internal/handler"
 	applogger "github.com/florantos/orbital-command/internal/logger"
+	"github.com/florantos/orbital-command/internal/repository"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func main() {
@@ -17,9 +20,21 @@ func main() {
 	}
 
 	logger := applogger.New(cfg.LogLevel, cfg.Env)
-	h := handler.NewHandler(logger, nil)
+
+	pool, err := pgxpool.New(context.Background(), cfg.DatabaseURL)
+	if err != nil {
+		logger.Error("Failed to connect to database", "error", err)
+		os.Exit(1)
+	}
+	defer pool.Close()
+
+	moduleRepo := repository.NewModuleRepo(pool)
+	auditRepo := repository.NewAuditEventRepo(pool)
+
+	h := handler.NewHandler(logger, moduleRepo, auditRepo)
 
 	http.HandleFunc("/health", h.Health)
+	http.HandleFunc("/modules", h.CreateModule)
 
 	logger.Info("Initializing server...", "port", cfg.Port)
 
