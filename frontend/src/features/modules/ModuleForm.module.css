@@ -1,0 +1,94 @@
+.input {
+  font-family: var(--font-head);
+  display: block;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(80, 180, 255, 0.12);
+  border-radius: 2px;
+  color: var(--text-bright);
+  outline: none;
+  width: 100%;
+  transition: all var(--transition-base);
+}
+
+.input:focus {
+  border-color: var(--color-cyan-mid);
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.08);
+}
+
+.label {
+  font-family: var(--font-data);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-mid);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.error {
+  font-family: var(--font-data);
+  color: var(--color-red);
+  font-size: 10px;
+  margin: 4px;
+  margin-bottom: 16px;
+}
+
+.errorButtons {
+  composes: error;
+  margin-bottom: 4px;
+}
+.formTitle {
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-bright);
+  margin-bottom: 20px;
+  letter-spacing: 0.04em;
+}
+.registerButton {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px 24px;
+  border: 1px solid var(--color-cyan-mid);
+  background: var(--color-cyan-dim);
+  color: var(--color-cyan);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.registerButton:hover {
+  background-color: rgba(0, 229, 255, 0.15);
+  box-shadow:
+    0 0 20px rgba(0, 229, 255, 0.15),
+    inset 0 0 20px rgba(0, 229, 255, 0.05);
+  text-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
+}
+
+.cancelButton {
+  composes: registerButton;
+  color: var(--text-mid);
+  background: transparent;
+  border-color: rgba(142, 170, 204, 0.2);
+}
+
+.cancelButton:hover {
+  border-color: rgba(142, 170, 204, 0.35);
+  background: rgba(142, 170, 204, 0.05);
+  box-shadow: none;
+  text-shadow: none;
+}
+
+.buttonRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}

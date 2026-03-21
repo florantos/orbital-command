@@ -1,0 +1,59 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.moduleCount {
+  font-family: var(--font-data);
+  color: var(--text-dim);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.registerModuleButton {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px 24px;
+  color: var(--color-cyan);
+  background-color: var(--color-cyan-dim);
+  border-radius: 2px;
+  border: 1px solid var(--color-cyan-mid);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.registerModuleButton:hover {
+  background-color: rgba(0, 229, 255, 0.15);
+  box-shadow:
+    0 0 20px rgba(0, 229, 255, 0.15),
+    inset 0 0 20px rgba(0, 229, 255, 0.05);
+  text-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
+}
+
+.dialogOverlay {
+  background-color: rgba(0, 0, 0, 0.4);
+  position: fixed;
+  inset: 0;
+  animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dialogContent {
+  background: var(--surface-panel);
+  border-radius: 2px;
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  box-shadow: var(--shadow-6);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: 480px;
+  max-height: 85vh;
+  padding: 24px;
+  animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
