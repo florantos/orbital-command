@@ -3,15 +3,19 @@ ifneq (,$(wildcard ./.env))
   export
 endif
 
-.PHONY: help dev down clean test lint
+.PHONY: help db-setup dev down clean test lint
 
 help:
 	@echo "Available commands:"
+	@echo "  make db-setup Create database schema"
 	@echo "  make dev     Start the full stack"
 	@echo "  make down    Stop containers, keep data"
 	@echo "  make clean   Stop containers, wipe data"
 	@echo "  make test    Run backend tests"
 	@echo "  make lint    Run backend linter"
+
+db-setup:
+	psql $(TEST_DATABASE_URL) -f backend/db/schema.sql
 
 dev:
 	docker compose up

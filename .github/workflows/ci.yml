@@ -16,11 +16,11 @@ jobs:
         env:
           POSTGRES_USER: orbital
           POSTGRES_PASSWORD: orbital
-          POSTGRES_DB: orbital_command_test
+          POSTGRES_DB: orbital_command
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U orbital -d orbital_command_test"
+          --health-cmd "pg_isready -U orbital -d orbital_command"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 5
@@ -32,6 +32,11 @@ jobs:
         with:
           go-version-file: backend/go.mod
           cache-dependency-path: backend/go.sum
+
+      - name: Create schema
+        env:
+          PGPASSWORD: orbital
+        run: psql -h localhost -U orbital -d orbital_command -f backend/db/schema.sql
 
       - name: Run linter
         uses: golangci/golangci-lint-action@v9
