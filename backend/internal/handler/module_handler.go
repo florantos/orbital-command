@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -46,7 +47,7 @@ func (h *Handler) CreateModule(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.logger.Info("creating module", "name", req.Name)
+	h.logger.Info("creating module", "name", module.Name)
 
 	created, err := h.moduleRepo.Create(r.Context(), module)
 	if err != nil {
@@ -58,8 +59,18 @@ func (h *Handler) CreateModule(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "internal server error")
 		return
 	}
-
 	h.logger.Info("module created", "id", created.ID, "name", created.Name)
+
+	event := domain.NewAuditEvent("module.registered", "module", created.ID, "Commander Chen", fmt.Sprintf("Registered module: %s", created.Name))
+
+	h.logger.Info("creating audit event", "action", event.Action, "entityID", event.EntityID)
+
+	err = h.auditEventRepo.Create(r.Context(), event)
+	if err != nil {
+		h.logger.Error("failed to create audit event", "error", err)
+	} else {
+		h.logger.Info("audit event created", "action", event.Action, "entityID", event.EntityID)
+	}
 
 	resp := CreateModuleResponse{
 		ID:          created.ID,
@@ -77,5 +88,5 @@ func (h *Handler) CreateModule(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	w.Write(resBody) //nolint:errcheck
+	w.Write(resBody)
 }
