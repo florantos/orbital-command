@@ -109,6 +109,14 @@ func TestCreateModuleHandler_Returns400OnMalformedJSON(t *testing.T) {
 	assert.Equal(t, "malformed request body", response.Error)
 }
 
+func TestCreateModuleHandler_Returns405OnInvalidMethod(t *testing.T) {
+	h := handler.NewHandler(slog.Default(), &mockModuleRepo{}, &mockAuditEventRepo{})
+	req := httptest.NewRequest(http.MethodGet, "/modules", nil)
+	w := httptest.NewRecorder()
+	h.CreateModule(w, req)
+	assert.Equal(t, http.StatusMethodNotAllowed, w.Code)
+}
+
 func TestCreateModuleHandler_Returns409OnDuplicateName(t *testing.T) {
 	moduleRepo := &mockModuleRepo{
 		createFn: func(ctx context.Context, module *domain.Module) (*domain.Module, error) {

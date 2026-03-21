@@ -28,6 +28,11 @@ type CreateModuleResponse struct {
 }
 
 func (h *Handler) CreateModule(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		writeError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		h.logger.Error("failed to read request body", "error", err)
@@ -61,6 +66,7 @@ func (h *Handler) CreateModule(w http.ResponseWriter, r *http.Request) {
 	}
 	h.logger.Info("module created", "id", created.ID, "name", created.Name)
 
+	// TODO(Loop 10): replace with authenticated user from request context
 	event := domain.NewAuditEvent("module.registered", "module", created.ID, "Commander Chen", fmt.Sprintf("Registered module: %s", created.Name))
 
 	h.logger.Info("creating audit event", "action", event.Action, "entityID", event.EntityID)
