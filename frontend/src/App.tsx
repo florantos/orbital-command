@@ -1,5 +1,7 @@
+import { ModulePage } from "./features/modules";
+
 function App() {
-  return <> </>;
+  return <ModulePage />;
 }
 
 export default App;
