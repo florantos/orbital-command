@@ -28,6 +28,8 @@ services:
       PORT: ${PORT}
       LOG_LEVEL: ${LOG_LEVEL}
       APP_ENV: ${APP_ENV}
+      CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN}
+
     depends_on:
       postgres:
         condition: service_healthy

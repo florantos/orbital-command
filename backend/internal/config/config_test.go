@@ -11,13 +11,14 @@ import (
 
 func TestLoad_ValidConfig(t *testing.T) {
 	envVars := map[string]string{
-		"PORT":         "8080",
-		"APP_ENV":      "development",
-		"DATABASE_URL": "postgres://user:password@localhost:5432/orbital_command",
+		"PORT":                "8080",
+		"APP_ENV":             "development",
+		"DATABASE_URL":        "postgres://user:password@localhost:5432/orbital_command",
+		"CORS_ALLOWED_ORIGIN": "http://localhost:5173",
 	}
 
 	// defensive: unset vars to account for shell env vars
-	for _, key := range []string{"PORT", "APP_ENV", "DATABASE_URL", "LOG_LEVEL"} {
+	for _, key := range []string{"PORT", "APP_ENV", "DATABASE_URL", "LOG_LEVEL", "CORS_ALLOWED_ORIGIN"} {
 		err := os.Unsetenv(key)
 		require.NoError(t, err)
 	}
@@ -33,6 +34,8 @@ func TestLoad_ValidConfig(t *testing.T) {
 	assert.Equal(t, envVars["APP_ENV"], cfg.Env)
 	assert.Equal(t, envVars["PORT"], cfg.Port)
 	assert.Equal(t, envVars["DATABASE_URL"], cfg.DatabaseURL)
+	assert.Equal(t, envVars["CORS_ALLOWED_ORIGIN"], cfg.CORSAllowedOrigin)
+
 }
 
 func TestLoad_MissingRequiredVars(t *testing.T) {
@@ -44,33 +47,44 @@ func TestLoad_MissingRequiredVars(t *testing.T) {
 		{
 			name: "missing APP_ENV returns error",
 			envVars: map[string]string{
-				"PORT":         "8080",
-				"DATABASE_URL": "postgres://user:password@localhost:5432/orbital_command",
+				"PORT":                "8080",
+				"DATABASE_URL":        "postgres://user:password@localhost:5432/orbital_command",
+				"CORS_ALLOWED_ORIGIN": "http://localhost:5173",
 			},
 			expectedErr: "cannot find env variable APP_ENV",
 		},
 		{
 			name: "missing PORT returns error",
 			envVars: map[string]string{
-				"APP_ENV":      "development",
-				"DATABASE_URL": "postgres://user:password@localhost:5432/orbital_command",
+				"APP_ENV":             "development",
+				"DATABASE_URL":        "postgres://user:password@localhost:5432/orbital_command",
+				"CORS_ALLOWED_ORIGIN": "http://localhost:5173",
 			},
 			expectedErr: "cannot find env variable PORT",
 		},
 		{
 			name: "missing DATABASE_URL returns error",
 			envVars: map[string]string{
+				"PORT":                "8080",
+				"APP_ENV":             "development",
+				"CORS_ALLOWED_ORIGIN": "http://localhost:5173",
+			},
+			expectedErr: "cannot find env variable DATABASE_URL",
+		},
+		{
+			name: "missing CORS_ALLOWED_ORIGIN returns error",
+			envVars: map[string]string{
 				"PORT":    "8080",
 				"APP_ENV": "development",
 			},
-			expectedErr: "cannot find env variable DATABASE_URL",
+			expectedErr: "cannot find env variable CORS_ALLOWED_ORIGIN",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// defensive: unset vars to account for shell env vars
-			for _, key := range []string{"PORT", "APP_ENV", "DATABASE_URL", "LOG_LEVEL"} {
+			for _, key := range []string{"PORT", "APP_ENV", "DATABASE_URL", "LOG_LEVEL", "CORS_ALLOWED_ORIGIN"} {
 				err := os.Unsetenv(key)
 				require.NoError(t, err)
 			}
@@ -96,36 +110,48 @@ func TestLoad_EmptyRequiredVars(t *testing.T) {
 
 			name: "empty APP_ENV returns error",
 			envVars: map[string]string{
-				"PORT":         "8080",
-				"APP_ENV":      "",
-				"DATABASE_URL": "postgres://user:password@localhost:5432/orbital_command",
+				"PORT":                "8080",
+				"APP_ENV":             "",
+				"DATABASE_URL":        "postgres://user:password@localhost:5432/orbital_command",
+				"CORS_ALLOWED_ORIGIN": "http://localhost:5173",
 			},
 			expectedErr: "env variable APP_ENV is empty",
 		},
 		{
 			name: "empty PORT returns error",
 			envVars: map[string]string{
-				"PORT":         "",
-				"APP_ENV":      "development",
-				"DATABASE_URL": "postgres://user:password@localhost:5432/orbital_command",
+				"PORT":                "",
+				"APP_ENV":             "development",
+				"DATABASE_URL":        "postgres://user:password@localhost:5432/orbital_command",
+				"CORS_ALLOWED_ORIGIN": "http://localhost:5173",
 			},
 			expectedErr: "env variable PORT is empty",
 		},
 		{
 			name: "empty DATABASE_URL returns error",
 			envVars: map[string]string{
-				"PORT":         "8080",
-				"APP_ENV":      "development",
-				"DATABASE_URL": "",
+				"PORT":                "8080",
+				"APP_ENV":             "development",
+				"DATABASE_URL":        "",
+				"CORS_ALLOWED_ORIGIN": "http://localhost:5173",
 			},
 			expectedErr: "env variable DATABASE_URL is empty",
+		},
+		{
+			name: "empty CORS_ALLOWED_ORIGIN returns error",
+			envVars: map[string]string{
+				"PORT":                "8080",
+				"APP_ENV":             "development",
+				"CORS_ALLOWED_ORIGIN": "",
+			},
+			expectedErr: "env variable CORS_ALLOWED_ORIGIN is empty",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// defensive: unset vars to account for shell env vars
-			for _, key := range []string{"PORT", "APP_ENV", "DATABASE_URL", "LOG_LEVEL"} {
+			for _, key := range []string{"PORT", "APP_ENV", "DATABASE_URL", "LOG_LEVEL", "CORS_ALLOWED_ORIGIN"} {
 				err := os.Unsetenv(key)
 				require.NoError(t, err)
 			}
@@ -151,18 +177,20 @@ func TestLoad_DefaultLogLevel(t *testing.T) {
 		{
 			name: "LOG_LEVEL defaults to info when not set",
 			envVars: map[string]string{
-				"PORT":         "8080",
-				"APP_ENV":      "development",
-				"DATABASE_URL": "postgres://user:password@localhost:5432/orbital_command",
+				"PORT":                "8080",
+				"APP_ENV":             "development",
+				"DATABASE_URL":        "postgres://user:password@localhost:5432/orbital_command",
+				"CORS_ALLOWED_ORIGIN": "http://localhost:5173",
 			},
 		},
 		{
 			name: "LOG_LEVEL defaults to info when empty",
 			envVars: map[string]string{
-				"PORT":         "8080",
-				"APP_ENV":      "development",
-				"DATABASE_URL": "postgres://user:password@localhost:5432/orbital_command",
-				"LOG_LEVEL":    "",
+				"PORT":                "8080",
+				"APP_ENV":             "development",
+				"DATABASE_URL":        "postgres://user:password@localhost:5432/orbital_command",
+				"LOG_LEVEL":           "",
+				"CORS_ALLOWED_ORIGIN": "http://localhost:5173",
 			},
 		},
 	}
@@ -171,7 +199,7 @@ func TestLoad_DefaultLogLevel(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 
 			// defensive: unset vars to account for shell env vars
-			for _, key := range []string{"PORT", "APP_ENV", "DATABASE_URL", "LOG_LEVEL"} {
+			for _, key := range []string{"PORT", "APP_ENV", "DATABASE_URL", "LOG_LEVEL", "CORS_ALLOWED_ORIGIN"} {
 				err := os.Unsetenv(key)
 				require.NoError(t, err)
 			}
