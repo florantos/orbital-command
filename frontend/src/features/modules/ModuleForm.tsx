@@ -87,7 +87,8 @@ const ModuleForm = ({ onSuccess, onCancel }: ModuleFormProps) => {
       {error && <p className={styles.errorButtons}>{error}</p>}
       <div className={styles.buttonRow}>
         <button className={styles.registerButton} type="submit" disabled={loading}>
-          Register
+          {loading && <span className={styles.spinner}></span>}
+          {loading ? "Saving..." : "Register"}
         </button>
         <Dialog.Close asChild>
           <button className={styles.cancelButton} type="button" onClick={onCancel} disabled={loading}>
