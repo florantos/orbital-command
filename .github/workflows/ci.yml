@@ -49,6 +49,8 @@ jobs:
           PORT: 8080
           APP_ENV: test
           LOG_LEVEL: debug
+          CORS_ALLOWED_ORIGIN: http://localhost:5173
+
         run: make test
   frontend:
     runs-on: ubuntu-latest

@@ -8,10 +8,11 @@ import (
 )
 
 type Config struct {
-	Port        string
-	LogLevel    string
-	DatabaseURL string
-	Env         string
+	Port              string
+	LogLevel          string
+	DatabaseURL       string
+	Env               string
+	CORSAllowedOrigin string
 }
 
 func Load() (Config, error) {
@@ -33,6 +34,14 @@ func Load() (Config, error) {
 		return Config{}, fmt.Errorf("env variable PORT is empty")
 	}
 
+	corsAllowedOrigin, ok := os.LookupEnv("CORS_ALLOWED_ORIGIN")
+	if !ok {
+		return Config{}, fmt.Errorf("cannot find env variable CORS_ALLOWED_ORIGIN")
+	}
+	if corsAllowedOrigin == "" {
+		return Config{}, fmt.Errorf("env variable CORS_ALLOWED_ORIGIN is empty")
+	}
+
 	logLevel := os.Getenv("LOG_LEVEL")
 	if logLevel == "" {
 		logLevel = "info"
@@ -47,10 +56,11 @@ func Load() (Config, error) {
 	}
 
 	cfg := Config{
-		Port:        port,
-		LogLevel:    logLevel,
-		DatabaseURL: url,
-		Env:         env,
+		Port:              port,
+		LogLevel:          logLevel,
+		DatabaseURL:       url,
+		Env:               env,
+		CORSAllowedOrigin: corsAllowedOrigin,
 	}
 
 	return cfg, nil
