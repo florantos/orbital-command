@@ -1,10 +1,5 @@
+@import "./reset.css";
 @import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap");
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
 
 :root {
   /* ── Color Primitives ── */
@@ -25,7 +20,7 @@
   --color-blue: #4488ff;
 
   /* ── Surface Primitives ── */
-  --surface-bg: #020810;
+  --surface-bg: #010810;
   --surface-panel: rgba(8, 24, 48, 0.6);
   --surface-panel-border: rgba(80, 180, 255, 0.12);
   --surface-panel-glow: rgba(80, 180, 255, 0.04);
@@ -82,10 +77,10 @@
 }
 
 body {
-  background: var(--surface-bg);
+  background-color: var(--surface-bg);
   color: var(--text-bright);
   font-family: var(--font-head);
   font-size: 14px;
   line-height: 1.6;
-  margin: 0;
+  margin: var(--space-5);
 }
