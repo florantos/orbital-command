@@ -55,7 +55,7 @@ func (r *ModuleRepo) ReadAll(ctx context.Context) ([]domain.Module, error) {
 				WHEN 'unresponsive' THEN 2
 				WHEN 'critical'		THEN 3
 				WHEN 'degraded'		THEN 4
-				WHEN 'operation'	THEN 5
+				WHEN 'operational'	THEN 5
 		END
 	`
 	rows, err := r.db.Query(ctx, query)
