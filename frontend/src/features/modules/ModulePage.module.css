@@ -2,6 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 14px;
 }
 
 .moduleCount {
@@ -45,7 +46,7 @@
 .dialogContent {
   background: var(--surface-panel);
   border-radius: 2px;
-  border: 1px solid rgba(0, 229, 255, 0.2);
+  border: 1px solid rgba(0, 229, 255, 0.1);
   box-shadow: var(--shadow-6);
   position: fixed;
   top: 50%;
@@ -56,4 +57,160 @@
   max-height: 85vh;
   padding: 24px;
   animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.moduleList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--surface-panel);
+  padding: 14px;
+}
+
+.cardLoading {
+  background: var(--surface-glass);
+  border: 1px solid var(--panel-border);
+  border-radius: 2px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.cardLoading::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 2px;
+}
+
+.cardLoadingSkel {
+  background: linear-gradient(
+    90deg,
+    rgba(80, 180, 255, 0.04) 25%,
+    rgba(80, 180, 255, 0.08) 50%,
+    rgba(80, 180, 255, 0.04) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+  border-radius: 2px;
+}
+
+.cardLoadingSkelName {
+  composes: cardLoadingSkel;
+  width: 140px;
+  height: 16px;
+  margin-bottom: 12px;
+}
+.cardLoadingSkelDescription {
+  composes: cardLoadingSkel;
+  width: 80px;
+  height: 8px;
+}
+
+.cardError {
+  background: rgba(255, 61, 90, 0.06);
+  border: 1px solid rgba(255, 61, 90, 0.15);
+  border-radius: 2px;
+  padding: 14px;
+  text-align: center;
+}
+
+.cardErrorTitle {
+  font-family: var(--font-data);
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--color-red);
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+
+.cardErrorDescription {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.cardErrorButton {
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 2px;
+  cursor: pointer;
+  border: 1px solid rgba(80, 180, 255, 0.15);
+  background: transparent;
+  color: var(--text-mid);
+  margin-top: 10px;
+  text-transform: uppercase;
+  color: var(--color-red);
+  border-color: rgba(255, 61, 90, 0.2);
+}
+
+.cardName {
+  color: var(--text-bright);
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cardDescription {
+  color: var(--text-mid);
+  font-size: 12px;
+}
+
+.cardHealthState {
+  font-family: var(--font-data);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.healthOperational {
+  color: var(--color-health-operational);
+}
+.healthDegraded {
+  color: var(--color-health-degraded);
+}
+.healthCritical {
+  color: var(--color-health-critical);
+}
+.healthUnresponsive {
+  color: var(--color-health-unresponsive);
+}
+.healthOffline {
+  color: var(--color-health-offline);
+}
+
+.healthBorderOperational {
+  border-left: 2px solid var(--color-health-operational);
+}
+.healthBorderDegraded {
+  border-left: 2px solid var(--color-health-degraded);
+}
+.healthBorderCritical {
+  border-left: 2px solid var(--color-health-critical);
+}
+.healthBorderUnresponsive {
+  border-left: 2px solid var(--color-health-unresponsive);
+}
+.healthBorderOffline {
+  border-left: 2px solid var(--color-health-offline);
+}
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
