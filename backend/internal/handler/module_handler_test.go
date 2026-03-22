@@ -18,11 +18,16 @@ import (
 )
 
 type mockModuleRepo struct {
-	createFn func(ctx context.Context, module *domain.Module) (*domain.Module, error)
+	createFn  func(ctx context.Context, module *domain.Module) (*domain.Module, error)
+	readAllFn func(ctx context.Context) ([]domain.Module, error)
 }
 
 func (m *mockModuleRepo) Create(ctx context.Context, module *domain.Module) (*domain.Module, error) {
 	return m.createFn(ctx, module)
+}
+
+func (m *mockModuleRepo) ReadAll(ctx context.Context) ([]domain.Module, error) {
+	return m.readAllFn(ctx)
 }
 
 type mockAuditEventRepo struct {
@@ -74,7 +79,7 @@ func TestCreateModuleHandler_Returns201OnSuccess(t *testing.T) {
 	assert.Equal(t, http.StatusCreated, res.StatusCode)
 	assert.Equal(t, "application/json", res.Header.Get("Content-Type"))
 
-	var response handler.CreateModuleResponse
+	var response handler.ModuleResponse
 	err = json.Unmarshal(w.Body.Bytes(), &response)
 	require.NoError(t, err)
 
@@ -299,7 +304,7 @@ func TestCreateModuleHandler_EmitsAuditEventOnSuccess(t *testing.T) {
 	assert.Equal(t, "application/json", res.Header.Get("Content-Type"))
 	assert.True(t, auditEventRepo.called)
 
-	var response handler.CreateModuleResponse
+	var response handler.ModuleResponse
 	err = json.Unmarshal(w.Body.Bytes(), &response)
 	require.NoError(t, err)
 
@@ -307,4 +312,98 @@ func TestCreateModuleHandler_EmitsAuditEventOnSuccess(t *testing.T) {
 	assert.Equal(t, returnedModule.Name, response.Name)
 	assert.Equal(t, returnedModule.Description, response.Description)
 	assert.Equal(t, string(returnedModule.HealthState), response.HealthState)
+}
+
+func TestReadAllModulesHandler_Returns500OnUnexpectedError(t *testing.T) {
+	moduleRepo := &mockModuleRepo{
+		readAllFn: func(ctx context.Context) ([]domain.Module, error) {
+			return []domain.Module{}, fmt.Errorf("read all modules: unexpected database error")
+		},
+	}
+
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
+	h := handler.NewHandler(logger, moduleRepo, nil)
+
+	r := httptest.NewRequest(http.MethodGet, "/modules", nil)
+	w := httptest.NewRecorder()
+
+	h.ReadAllModules(w, r)
+
+	res := w.Result()
+	assert.Equal(t, http.StatusInternalServerError, res.StatusCode)
+	assert.Equal(t, "application/json", res.Header.Get("Content-Type"))
+
+	var response handler.ErrorResponse
+	err := json.Unmarshal(w.Body.Bytes(), &response)
+	require.NoError(t, err)
+	assert.Equal(t, "internal server error", response.Error)
+
+}
+
+func TestReadAllModulesHandler_Returns405OnInvalidMethod(t *testing.T) {
+	h := handler.NewHandler(slog.Default(), &mockModuleRepo{}, &mockAuditEventRepo{})
+	req := httptest.NewRequest(http.MethodPost, "/modules", nil)
+	w := httptest.NewRecorder()
+	h.ReadAllModules(w, req)
+	assert.Equal(t, http.StatusMethodNotAllowed, w.Code)
+
+}
+
+func TestReadAllModulesHandler_Returns200(t *testing.T) {
+	tests := []struct {
+		name  string
+		input []domain.Module
+	}{
+		{
+			name: "returns modules on success",
+			input: []domain.Module{
+				{ID: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+					Name:        "Navigation Array",
+					Description: "Controls navigation systems",
+					HealthState: domain.HealthStateOperational},
+				{ID: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12",
+					Name:        "Navigation Array2",
+					Description: "Controls navigation systems2",
+					HealthState: domain.HealthStateOperational},
+			},
+		},
+		{
+			name:  "returns empty slice on success",
+			input: []domain.Module{},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			moduleRepo := &mockModuleRepo{
+				readAllFn: func(ctx context.Context) ([]domain.Module, error) {
+					return tt.input, nil
+				},
+			}
+			auditEventRepo := &mockAuditEventRepo{
+				createFn: func(ctx context.Context, event *domain.AuditEvent) error {
+					return nil
+				},
+			}
+
+			logger := slog.New(slog.NewTextHandler(io.Discard, nil))
+			h := handler.NewHandler(logger, moduleRepo, auditEventRepo)
+
+			r := httptest.NewRequest(http.MethodGet, "/modules", nil)
+			w := httptest.NewRecorder()
+
+			h.ReadAllModules(w, r)
+
+			res := w.Result()
+			assert.Equal(t, http.StatusOK, res.StatusCode)
+
+			var response handler.ReadAllModulesResponse
+			err := json.Unmarshal(w.Body.Bytes(), &response)
+			require.NoError(t, err)
+
+			assert.NotNil(t, response.Modules)
+			assert.Len(t, response.Modules, len(tt.input))
+		})
+	}
+
 }
