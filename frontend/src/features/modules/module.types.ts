@@ -4,3 +4,7 @@ export interface Module {
   description: string;
   healthState: string;
 }
+
+export interface ModuleError {
+  error: string;
+}
