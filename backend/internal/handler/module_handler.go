@@ -33,11 +33,6 @@ type ReadAllModulesResponse struct {
 }
 
 func (h *Handler) CreateModule(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		writeError(w, http.StatusMethodNotAllowed, "method not allowed")
-		return
-	}
-
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		h.logger.Error("failed to read request body", "error", err)
@@ -99,11 +94,6 @@ func (h *Handler) CreateModule(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) ReadAllModules(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		writeError(w, http.StatusMethodNotAllowed, "method not allowed")
-		return
-	}
-
 	h.logger.Info("reading all modules")
 
 	modules, err := h.moduleRepo.ReadAll(r.Context())
