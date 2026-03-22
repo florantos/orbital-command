@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { API_BASE_URL } from "../../lib/api";
 import type { Module, ModuleError } from "./module.types";
@@ -6,38 +6,51 @@ import type { Module, ModuleError } from "./module.types";
 interface ReadAllModulesResponse {
   modules: Module[];
 }
+
 function useReadModules() {
-  const [loading, setLoading] = useState(false);
+  const [modules, setModules] = useState<Module[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const readModules = async (): Promise<ReadAllModulesResponse | null> => {
+  const load = useCallback(async (signal: AbortSignal) => {
     setLoading(true);
     setError(null);
 
     try {
       const res = await fetch(`${API_BASE_URL}/modules`, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        signal,
       });
       const data = (await res.json()) as ReadAllModulesResponse | ModuleError;
 
       if (!res.ok) {
-        const errData = data as ModuleError;
-        setError(errData.error);
-        return null;
+        setError((data as ModuleError).error);
+        return;
       }
-      return data as ReadAllModulesResponse;
-    } catch {
+
+      setModules((data as ReadAllModulesResponse).modules);
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
       setError("Network error - please try again");
-      return null;
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  return { readModules, loading, error };
+  useEffect(() => {
+    const controller = new AbortController();
+    void load(controller.signal);
+    return () => {
+      controller.abort();
+    };
+  }, [load]);
+
+  const refetch = useCallback(() => {
+    const controller = new AbortController();
+    void load(controller.signal);
+  }, [load]);
+
+  return { modules, loading, error, refetch };
 }
 
 export { useReadModules };
