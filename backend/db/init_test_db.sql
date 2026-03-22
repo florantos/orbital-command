@@ -1,0 +1,1 @@
+CREATE DATABASE orbital_command_test;
