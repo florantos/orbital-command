@@ -11,6 +11,7 @@ import (
 	applogger "github.com/florantos/orbital-command/internal/logger"
 	"github.com/florantos/orbital-command/internal/middleware"
 	"github.com/florantos/orbital-command/internal/repository"
+	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -34,15 +35,18 @@ func main() {
 
 	h := handler.NewHandler(logger, moduleRepo, auditRepo)
 
-	mux := http.NewServeMux()
+	r := chi.NewRouter()
+	r.Use(middleware.CORS(cfg.CORSAllowedOrigin))
 
-	mux.HandleFunc("/health", h.Health)
-	mux.HandleFunc("/modules", h.CreateModule)
+	r.Get("/health", h.Health)
+	r.Post("/modules", h.CreateModule)
+	r.Get("/modules", h.ReadAllModules)
 
 	logger.Info("Initializing server...", "port", cfg.Port)
 
-	if err := http.ListenAndServe(":"+cfg.Port, middleware.CORS(cfg.CORSAllowedOrigin)(mux)); err != nil {
+	if err := http.ListenAndServe(":"+cfg.Port, r); err != nil {
 		logger.Error("server failed", "error", err)
 		os.Exit(1)
 	}
+
 }
