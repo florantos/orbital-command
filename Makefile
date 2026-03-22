@@ -7,15 +7,19 @@ endif
 
 help:
 	@echo "Available commands:"
-	@echo "  make db-setup Create database schema"
-	@echo "  make dev     Start the full stack"
-	@echo "  make down    Stop containers, keep data"
-	@echo "  make clean   Stop containers, wipe data"
-	@echo "  make test    Run backend tests"
-	@echo "  make lint    Run backend linter"
+	@echo "  make db-setup       Create database schema"
+	@echo "  make db-setup-test  Create test database schema"
+	@echo "  make dev            Start the full stack"
+	@echo "  make down           Stop containers, keep data"
+	@echo "  make clean          Stop containers, wipe data"
+	@echo "  make test           Run backend tests"
+	@echo "  make lint           Run backend linter"
 
 db-setup:
-	psql $(TEST_DATABASE_URL) -f backend/db/schema.sql
+	docker exec -i orbital-command-postgres-1 psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) < backend/db/schema.sql
+
+db-setup-test:
+	docker exec -i orbital-command-postgres-1 psql -U $(POSTGRES_USER) -d $(POSTGRES_DB)_test < backend/db/schema.sql
 
 dev:
 	docker compose up
