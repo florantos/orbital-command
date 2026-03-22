@@ -13,6 +13,7 @@ import (
 
 type ModuleRepository interface {
 	Create(ctx context.Context, module *domain.Module) (*domain.Module, error)
+	ReadAll(ctx context.Context) ([]domain.Module, error)
 }
 
 type CreateModuleRequest struct {
@@ -20,11 +21,15 @@ type CreateModuleRequest struct {
 	Description string `json:"description"`
 }
 
-type CreateModuleResponse struct {
+type ModuleResponse struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	HealthState string `json:"healthState"`
+}
+
+type ReadAllModulesResponse struct {
+	Modules []ModuleResponse `json:"modules"`
 }
 
 func (h *Handler) CreateModule(w http.ResponseWriter, r *http.Request) {
@@ -78,21 +83,55 @@ func (h *Handler) CreateModule(w http.ResponseWriter, r *http.Request) {
 		h.logger.Info("audit event created", "action", event.Action, "entityID", event.EntityID)
 	}
 
-	resp := CreateModuleResponse{
+	resp := ModuleResponse{
 		ID:          created.ID,
 		Name:        created.Name,
 		Description: created.Description,
 		HealthState: string(created.HealthState),
 	}
 
-	resBody, err := json.Marshal(resp)
+	err = writeJSON(w, http.StatusCreated, resp)
+	if err != nil {
+		h.logger.Error("failed to marshal response", "error", err)
+		writeError(w, http.StatusInternalServerError, "internal server error")
+		return
+	}
+}
+
+func (h *Handler) ReadAllModules(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		writeError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+
+	h.logger.Info("reading all modules")
+
+	modules, err := h.moduleRepo.ReadAll(r.Context())
+	if err != nil {
+		h.logger.Error("failed to read all modules", "error", err)
+		writeError(w, http.StatusInternalServerError, "internal server error")
+		return
+	}
+
+	resp := ReadAllModulesResponse{
+		Modules: []ModuleResponse{},
+	}
+
+	for _, m := range modules {
+		resp.Modules = append(resp.Modules, ModuleResponse{
+			ID:          m.ID,
+			Name:        m.Name,
+			Description: m.Description,
+			HealthState: string(m.HealthState),
+		})
+	}
+	h.logger.Info("modules read", "count", len(modules))
+
+	err = writeJSON(w, http.StatusOK, resp)
 	if err != nil {
 		h.logger.Error("failed to marshal response", "error", err)
 		writeError(w, http.StatusInternalServerError, "internal server error")
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	w.Write(resBody)
 }
