@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { API_BASE_URL } from "../../lib/api";
 import type { Module, ModuleError } from "./module.types";
@@ -11,6 +11,8 @@ function useReadModules() {
   const [modules, setModules] = useState<Module[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const controllerRef = useRef<AbortController | null>(null);
 
   const load = useCallback(async (signal: AbortSignal) => {
     setLoading(true);
@@ -46,8 +48,10 @@ function useReadModules() {
   }, [load]);
 
   const refetch = useCallback(() => {
-    const controller = new AbortController();
-    void load(controller.signal);
+    controllerRef.current?.abort();
+    controllerRef.current = new AbortController();
+    void load(controllerRef.current.signal);
+    void load(controllerRef.current.signal);
   }, [load]);
 
   return { modules, loading, error, refetch };
