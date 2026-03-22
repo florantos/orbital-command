@@ -81,8 +81,10 @@ function ModulePage() {
             </button>
           </div>
         )}
-        {modules.length === 0 && <>No Modules</>}
-        {modules.length !== 0 &&
+        {!loading && !error && modules.length === 0 && <>No Modules</>}
+        {!loading &&
+          !error &&
+          modules.length !== 0 &&
           modules.map((m) => {
             const healthStateClass = {
               operational: styles.healthOperational,
