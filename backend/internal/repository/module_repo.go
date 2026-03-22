@@ -44,3 +44,39 @@ func (r *ModuleRepo) Create(ctx context.Context, module *domain.Module) (*domain
 
 	return created, nil
 }
+
+func (r *ModuleRepo) ReadAll(ctx context.Context) ([]domain.Module, error) {
+	query := `
+		SELECT id, name, description, health_state, created_at
+		FROM modules
+		ORDER BY
+			Case health_state
+				WHEN 'offline'	    THEN 1
+				WHEN 'unresponsive' THEN 2
+				WHEN 'critical'		THEN 3
+				WHEN 'degraded'		THEN 4
+				WHEN 'operation'	THEN 5
+		END
+	`
+	rows, err := r.db.Query(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("read all modules: %w", err)
+	}
+	defer rows.Close()
+
+	modules := []domain.Module{}
+	for rows.Next() {
+		var m domain.Module
+		err := rows.Scan(&m.ID, &m.Name, &m.Description, &m.HealthState, &m.CreatedAt)
+		if err != nil {
+			return nil, fmt.Errorf("read all modules: scan: %w", err)
+		}
+		modules = append(modules, m)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("read all modules: rows: %w", err)
+	}
+
+	return modules, nil
+}
