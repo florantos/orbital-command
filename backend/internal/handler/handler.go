@@ -11,6 +11,7 @@ import (
 
 type AuditEventRepository interface {
 	Create(ctx context.Context, event *domain.AuditEvent) error
+	ReadAll(ctx context.Context) ([]domain.AuditEvent, error)
 }
 
 type Handler struct {
