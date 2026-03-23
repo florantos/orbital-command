@@ -32,7 +32,13 @@ type ErrorResponse struct {
 }
 
 func writeError(w http.ResponseWriter, status int, message string) {
-	body, _ := json.Marshal(ErrorResponse{Error: message})
+	body, err := json.Marshal(ErrorResponse{Error: message})
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(`{"error":"internal server error"}`))
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	w.Write(body)
