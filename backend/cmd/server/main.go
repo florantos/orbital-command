@@ -42,6 +42,8 @@ func main() {
 	r.Post("/modules", h.CreateModule)
 	r.Get("/modules", h.ReadAllModules)
 
+	r.Get("/audit-events", h.ReadAllAuditEvents)
+
 	logger.Info("Initializing server...", "port", cfg.Port)
 
 	if err := http.ListenAndServe(":"+cfg.Port, r); err != nil {

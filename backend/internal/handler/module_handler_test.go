@@ -30,16 +30,6 @@ func (m *mockModuleRepo) ReadAll(ctx context.Context) ([]domain.Module, error) {
 	return m.readAllFn(ctx)
 }
 
-type mockAuditEventRepo struct {
-	createFn func(ctx context.Context, event *domain.AuditEvent) error
-	called   bool
-}
-
-func (m *mockAuditEventRepo) Create(ctx context.Context, event *domain.AuditEvent) error {
-	m.called = true
-	return m.createFn(ctx, event)
-}
-
 func TestCreateModuleHandler_Returns201OnSuccess(t *testing.T) {
 	returnedModule := &domain.Module{
 		ID:          "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
