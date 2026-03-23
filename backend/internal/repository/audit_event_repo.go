@@ -24,7 +24,7 @@ func (r *AuditEventRepo) Create(ctx context.Context, event *domain.AuditEvent) e
 
 	_, err := r.db.Exec(ctx, query, event.Action, event.EntityType, event.EntityID, event.Actor, event.Detail)
 	if err != nil {
-		return fmt.Errorf("create audit_event: %w", err)
+		return fmt.Errorf("create audit event: %w", err)
 	}
 
 	return nil
