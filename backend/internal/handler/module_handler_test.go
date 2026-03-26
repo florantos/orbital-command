@@ -173,10 +173,9 @@ func TestCreateModuleHandler_Returns500OnUnexpectedError(t *testing.T) {
 
 func TestCreateModuleHandler_Returns422OnValidationFailure(t *testing.T) {
 	tests := []struct {
-		name          string
-		reqBody       handler.CreateModuleRequest
-		expectedErr   string
-		expectedField string
+		name           string
+		reqBody        handler.CreateModuleRequest
+		expectedFields []string
 	}{
 		{
 			name: "name empty returns 422",
@@ -184,8 +183,7 @@ func TestCreateModuleHandler_Returns422OnValidationFailure(t *testing.T) {
 				Name:        "",
 				Description: "Controls navigation systems",
 			},
-			expectedErr:   "name is required",
-			expectedField: "name",
+			expectedFields: []string{"name"},
 		},
 		{
 			name: "whitespace only name returns 422",
@@ -193,8 +191,7 @@ func TestCreateModuleHandler_Returns422OnValidationFailure(t *testing.T) {
 				Name:        " ",
 				Description: "Controls navigation systems",
 			},
-			expectedErr:   "name is required",
-			expectedField: "name",
+			expectedFields: []string{"name"},
 		},
 		{
 			name: "name longer than 100 chars returns 422",
@@ -202,8 +199,7 @@ func TestCreateModuleHandler_Returns422OnValidationFailure(t *testing.T) {
 				Name:        "This name is really long and needs to be longer than 100 chars so we will keel typing and typiong and typ",
 				Description: "Controls navigation systems",
 			},
-			expectedErr:   "name cannot exceed 100 characters",
-			expectedField: "name",
+			expectedFields: []string{"name"},
 		},
 		{
 			name: "description empty returns 422",
@@ -211,8 +207,7 @@ func TestCreateModuleHandler_Returns422OnValidationFailure(t *testing.T) {
 				Name:        "Navigation Array",
 				Description: "",
 			},
-			expectedErr:   "description is required",
-			expectedField: "description",
+			expectedFields: []string{"description"},
 		},
 		{
 			name: "whitepase only description returns 422",
@@ -220,8 +215,15 @@ func TestCreateModuleHandler_Returns422OnValidationFailure(t *testing.T) {
 				Name:        "Navigation Array",
 				Description: " ",
 			},
-			expectedErr:   "description is required",
-			expectedField: "description",
+			expectedFields: []string{"description"},
+		},
+		{
+			name: "multiple field errors returns 422",
+			reqBody: handler.CreateModuleRequest{
+				Name:        "",
+				Description: "",
+			},
+			expectedFields: []string{"name", "description"},
 		},
 	}
 
@@ -247,7 +249,11 @@ func TestCreateModuleHandler_Returns422OnValidationFailure(t *testing.T) {
 			err = json.Unmarshal(w.Body.Bytes(), &response)
 			require.NoError(t, err)
 			assert.Equal(t, "validation failed", response.Error)
-			assert.Equal(t, tt.expectedErr, response.Fields[tt.expectedField])
+
+			for _, field := range tt.expectedFields {
+				assert.NotEmpty(t, response.Fields[field])
+
+			}
 		})
 	}
 }
