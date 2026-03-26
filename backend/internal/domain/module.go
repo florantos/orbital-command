@@ -30,8 +30,8 @@ var ErrDuplicateModuleName = errors.New("duplicate module name")
 
 func NewModule(name, description string) (*Module, error) {
 	m := &Module{
-		Name:        name,
-		Description: description,
+		Name:        strings.TrimSpace(name),
+		Description: strings.TrimSpace(description),
 		HealthState: HealthStateOperational,
 	}
 
@@ -46,9 +46,6 @@ func (m *Module) Validate() error {
 	ve := &ValidationError{
 		Fields: make(map[string]string),
 	}
-
-	m.Name = strings.TrimSpace(m.Name)
-	m.Description = strings.TrimSpace(m.Description)
 
 	if m.Name == "" {
 		ve.Fields["name"] = "name is required"
