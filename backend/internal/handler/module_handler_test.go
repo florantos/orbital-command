@@ -210,7 +210,7 @@ func TestCreateModuleHandler_Returns422OnValidationFailure(t *testing.T) {
 			expectedFields: []string{"description"},
 		},
 		{
-			name: "whitepase only description returns 422",
+			name: "whitespace only description returns 422",
 			reqBody: handler.CreateModuleRequest{
 				Name:        "Navigation Array",
 				Description: " ",
