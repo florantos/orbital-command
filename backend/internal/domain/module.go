@@ -2,7 +2,6 @@ package domain
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -30,23 +29,39 @@ type Module struct {
 var ErrDuplicateModuleName = errors.New("duplicate module name")
 
 func NewModule(name, description string) (*Module, error) {
-	name = strings.TrimSpace(name)
-	description = strings.TrimSpace(description)
-
-	if name == "" {
-		return nil, fmt.Errorf("name is required")
-	}
-	if utf8.RuneCountInString(name) > 100 {
-		return nil, fmt.Errorf("name cannot exceed 100 characters")
-	}
-
-	if description == "" {
-		return nil, fmt.Errorf("description is required")
-	}
-
-	return &Module{
+	m := &Module{
 		Name:        name,
 		Description: description,
 		HealthState: HealthStateOperational,
-	}, nil
+	}
+
+	err := m.Validate()
+	if err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (m *Module) Validate() error {
+	ve := &ValidationError{
+		Fields: make(map[string]string),
+	}
+
+	m.Name = strings.TrimSpace(m.Name)
+	m.Description = strings.TrimSpace(m.Description)
+
+	if m.Name == "" {
+		ve.Fields["name"] = "name is required"
+	} else if utf8.RuneCountInString(m.Name) > 100 {
+		ve.Fields["name"] = "name cannot exceed 100 characters"
+	}
+
+	if m.Description == "" {
+		ve.Fields["description"] = "description is required"
+	}
+
+	if len(ve.Fields) > 0 {
+		return ve
+	}
+	return nil
 }

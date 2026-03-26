@@ -46,7 +46,10 @@ func TestNewModule_NameValidation(t *testing.T) {
 
 			_, err := domain.NewModule(tt.inputName, "some test description")
 
-			assert.EqualError(t, err, tt.expectedErr)
+			require.Error(t, err)
+			var ve *domain.ValidationError
+			require.ErrorAs(t, err, &ve)
+			assert.Equal(t, tt.expectedErr, ve.Fields["name"])
 		})
 	}
 }
@@ -73,7 +76,10 @@ func TestNewModule_DescriptionValidation(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := domain.NewModule("test name", tt.inputDescription)
 
-			assert.EqualError(t, err, tt.expectedErr)
+			require.Error(t, err)
+			var ve *domain.ValidationError
+			require.ErrorAs(t, err, &ve)
+			assert.Equal(t, tt.expectedErr, ve.Fields["description"])
 
 		})
 	}

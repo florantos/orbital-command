@@ -173,9 +173,10 @@ func TestCreateModuleHandler_Returns500OnUnexpectedError(t *testing.T) {
 
 func TestCreateModuleHandler_Returns422OnValidationFailure(t *testing.T) {
 	tests := []struct {
-		name        string
-		reqBody     handler.CreateModuleRequest
-		expectedErr string
+		name          string
+		reqBody       handler.CreateModuleRequest
+		expectedErr   string
+		expectedField string
 	}{
 		{
 			name: "name empty returns 422",
@@ -183,7 +184,8 @@ func TestCreateModuleHandler_Returns422OnValidationFailure(t *testing.T) {
 				Name:        "",
 				Description: "Controls navigation systems",
 			},
-			expectedErr: "name is required",
+			expectedErr:   "name is required",
+			expectedField: "name",
 		},
 		{
 			name: "whitespace only name returns 422",
@@ -191,7 +193,8 @@ func TestCreateModuleHandler_Returns422OnValidationFailure(t *testing.T) {
 				Name:        " ",
 				Description: "Controls navigation systems",
 			},
-			expectedErr: "name is required",
+			expectedErr:   "name is required",
+			expectedField: "name",
 		},
 		{
 			name: "name longer than 100 chars returns 422",
@@ -199,7 +202,8 @@ func TestCreateModuleHandler_Returns422OnValidationFailure(t *testing.T) {
 				Name:        "This name is really long and needs to be longer than 100 chars so we will keel typing and typiong and typ",
 				Description: "Controls navigation systems",
 			},
-			expectedErr: "name cannot exceed 100 characters",
+			expectedErr:   "name cannot exceed 100 characters",
+			expectedField: "name",
 		},
 		{
 			name: "description empty returns 422",
@@ -207,7 +211,8 @@ func TestCreateModuleHandler_Returns422OnValidationFailure(t *testing.T) {
 				Name:        "Navigation Array",
 				Description: "",
 			},
-			expectedErr: "description is required",
+			expectedErr:   "description is required",
+			expectedField: "description",
 		},
 		{
 			name: "whitepase only description returns 422",
@@ -215,7 +220,8 @@ func TestCreateModuleHandler_Returns422OnValidationFailure(t *testing.T) {
 				Name:        "Navigation Array",
 				Description: " ",
 			},
-			expectedErr: "description is required",
+			expectedErr:   "description is required",
+			expectedField: "description",
 		},
 	}
 
@@ -240,7 +246,8 @@ func TestCreateModuleHandler_Returns422OnValidationFailure(t *testing.T) {
 			var response handler.ErrorResponse
 			err = json.Unmarshal(w.Body.Bytes(), &response)
 			require.NoError(t, err)
-			assert.Equal(t, tt.expectedErr, response.Error)
+			assert.Equal(t, "validation failed", response.Error)
+			assert.Equal(t, tt.expectedErr, response.Fields[tt.expectedField])
 		})
 	}
 }
