@@ -53,7 +53,7 @@ func (h *Handler) CreateModule(w http.ResponseWriter, r *http.Request) {
 			writeValidationError(w, ve)
 			return
 		}
-		h.logger.Error("unexpected error from NewModule", "error", err)
+		h.logger.Error("creating module", "error", err)
 		writeError(w, http.StatusInternalServerError, "internal server error")
 		return
 	}
