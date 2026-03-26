@@ -29,7 +29,8 @@ func NewHandler(logger *slog.Logger, moduleRepo ModuleRepository, auditEventRepo
 }
 
 type ErrorResponse struct {
-	Error string `json:"error"`
+	Error  string            `json:"error"`
+	Fields map[string]string `json:"fields,omitempty"`
 }
 
 func writeError(w http.ResponseWriter, status int, message string) {
@@ -42,6 +43,19 @@ func writeError(w http.ResponseWriter, status int, message string) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
+	w.Write(body)
+}
+
+func writeValidationError(w http.ResponseWriter, ve *domain.ValidationError) {
+	body, err := json.Marshal(ErrorResponse{Error: "validation failed", Fields: ve.Fields})
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(`{"error":"internal server error"}`))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusUnprocessableEntity)
 	w.Write(body)
 }
 

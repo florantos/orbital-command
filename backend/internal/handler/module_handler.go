@@ -48,7 +48,13 @@ func (h *Handler) CreateModule(w http.ResponseWriter, r *http.Request) {
 
 	module, err := domain.NewModule(req.Name, req.Description)
 	if err != nil {
-		writeError(w, http.StatusUnprocessableEntity, err.Error())
+		var ve *domain.ValidationError
+		if errors.As(err, &ve) {
+			writeValidationError(w, ve)
+			return
+		}
+		h.logger.Error("unexpected error from NewModule", "error", err)
+		writeError(w, http.StatusInternalServerError, "internal server error")
 		return
 	}
 
