@@ -12,8 +12,7 @@ import (
 )
 
 func TestModuleRepo_Create_PersistsAndReturnsModule(t *testing.T) {
-	pool := testutil.NewTestPool(t)
-	tx := testutil.NewTestTx(t, pool)
+	tx := testutil.NewTestTx(t, testPool)
 	repo := repository.NewModuleRepo(tx)
 
 	module, err := domain.NewModule("Navigation Array", "Controls navigation systems")
@@ -32,8 +31,7 @@ func TestModuleRepo_Create_PersistsAndReturnsModule(t *testing.T) {
 }
 
 func TestModuleRepo_Create_ReturnsErrorOnDuplicateName(t *testing.T) {
-	pool := testutil.NewTestPool(t)
-	tx := testutil.NewTestTx(t, pool)
+	tx := testutil.NewTestTx(t, testPool)
 	repo := repository.NewModuleRepo(tx)
 
 	module, err := domain.NewModule("Navigation Array", "Controls navigation systems")
@@ -48,8 +46,7 @@ func TestModuleRepo_Create_ReturnsErrorOnDuplicateName(t *testing.T) {
 }
 
 func TestModuleRepo_ReadAll_ReturnsAllModules(t *testing.T) {
-	pool := testutil.NewTestPool(t)
-	tx := testutil.NewTestTx(t, pool)
+	tx := testutil.NewTestTx(t, testPool)
 	repo := repository.NewModuleRepo(tx)
 
 	module, err := domain.NewModule("Navigation Array", "Controls navigation systems")
@@ -69,8 +66,7 @@ func TestModuleRepo_ReadAll_ReturnsAllModules(t *testing.T) {
 
 }
 func TestModuleRepo_ReadAll_ReturnsEmptyArrayWhenNoModules(t *testing.T) {
-	pool := testutil.NewTestPool(t)
-	tx := testutil.NewTestTx(t, pool)
+	tx := testutil.NewTestTx(t, testPool)
 	repo := repository.NewModuleRepo(tx)
 
 	modules, err := repo.ReadAll(context.Background())

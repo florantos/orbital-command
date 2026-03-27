@@ -12,8 +12,7 @@ import (
 )
 
 func TestAuditEventRepo_Create_PersistsAuditEvent(t *testing.T) {
-	pool := testutil.NewTestPool(t)
-	tx := testutil.NewTestTx(t, pool)
+	tx := testutil.NewTestTx(t, testPool)
 	repo := repository.NewAuditEventRepo(tx)
 
 	event := domain.NewAuditEvent("module.registered", "module", "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11", "Commander Chen", "Registered module: Navigation Array")
@@ -25,8 +24,7 @@ func TestAuditEventRepo_Create_PersistsAuditEvent(t *testing.T) {
 }
 
 func TestAuditEventRepo_ReadAll_ReturnsAllEvents(t *testing.T) {
-	pool := testutil.NewTestPool(t)
-	tx := testutil.NewTestTx(t, pool)
+	tx := testutil.NewTestTx(t, testPool)
 	repo := repository.NewAuditEventRepo(tx)
 
 	event := domain.NewAuditEvent("module.registered", "module", "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12", "System", "Registered module: Navigation Array2")
@@ -45,8 +43,7 @@ func TestAuditEventRepo_ReadAll_ReturnsAllEvents(t *testing.T) {
 }
 
 func TestAuditEventRepo_ReadAll_ReturnsEmptyArrayWhenNoEvents(t *testing.T) {
-	pool := testutil.NewTestPool(t)
-	tx := testutil.NewTestTx(t, pool)
+	tx := testutil.NewTestTx(t, testPool)
 	repo := repository.NewAuditEventRepo(tx)
 
 	events, err := repo.ReadAll(context.Background())
