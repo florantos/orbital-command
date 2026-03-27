@@ -42,6 +42,7 @@ func NewTestModule(t *testing.T, opts ...func(*domain.Module)) *domain.Module {
 }
 
 func SeedModules(t *testing.T, db database.DBTX, modules []*domain.Module) {
+	t.Helper()
 	query := `
 		INSERT INTO modules (name, description, health_state) 
 		VALUES ($1, $2, $3)
