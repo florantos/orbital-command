@@ -12,6 +12,7 @@ import (
 
 	"github.com/florantos/orbital-command/internal/domain"
 	"github.com/florantos/orbital-command/internal/handler"
+	"github.com/florantos/orbital-command/internal/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -31,7 +32,7 @@ func (m *mockAuditEventRepo) ReadAll(ctx context.Context) ([]domain.AuditEvent, 
 	return m.readAllFn(ctx)
 }
 
-func TestAuditEvent_Handler_Returns200(t *testing.T) {
+func TestAuditEventHandler_ReadAll_Returns200(t *testing.T) {
 	tests := []struct {
 		name  string
 		input []domain.AuditEvent
@@ -39,23 +40,8 @@ func TestAuditEvent_Handler_Returns200(t *testing.T) {
 		{
 			name: "returns audit events on success",
 			input: []domain.AuditEvent{
-				{
-					ID:         "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
-					Action:     "module.registered",
-					EntityType: "module",
-					EntityID:   "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380b12",
-					Actor:      "Commander Chen",
-					Detail:     "Registered module: Navigation Array",
-				},
-
-				{
-					ID:         "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13",
-					Action:     "Navigation Array",
-					EntityType: "module",
-					EntityID:   "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380b14",
-					Actor:      "System",
-					Detail:     "Registered module: Navigation Array2",
-				},
+				*testutil.NewTestAuditEvent(t),
+				*testutil.NewTestAuditEvent(t),
 			},
 		},
 		{
@@ -94,7 +80,7 @@ func TestAuditEvent_Handler_Returns200(t *testing.T) {
 	}
 
 }
-func TestAuditEvent_Handler_Returns500OnUnexpectedError(t *testing.T) {
+func TestAuditEventHandler_ReadAll_Returns500OnUnexpectedError(t *testing.T) {
 	auditEventRepo := &mockAuditEventRepo{
 		readAllFn: func(ctx context.Context) ([]domain.AuditEvent, error) {
 			return []domain.AuditEvent{}, fmt.Errorf("read all audit events: unexpected database error")

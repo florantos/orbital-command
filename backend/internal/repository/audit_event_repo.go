@@ -4,14 +4,15 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/florantos/orbital-command/internal/database"
 	"github.com/florantos/orbital-command/internal/domain"
 )
 
 type AuditEventRepo struct {
-	db DBTX
+	db database.DBTX
 }
 
-func NewAuditEventRepo(db DBTX) *AuditEventRepo {
+func NewAuditEventRepo(db database.DBTX) *AuditEventRepo {
 	return &AuditEventRepo{db: db}
 
 }

@@ -15,8 +15,7 @@ func TestAuditEventRepo_Create_PersistsAuditEvent(t *testing.T) {
 	tx := testutil.NewTestTx(t, testPool)
 	repo := repository.NewAuditEventRepo(tx)
 
-	event := domain.NewAuditEvent("module.registered", "module", "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11", "Commander Chen", "Registered module: Navigation Array")
-
+	event := testutil.NewTestAuditEvent(t)
 	err := repo.Create(context.Background(), event)
 
 	require.NoError(t, err)
@@ -27,18 +26,15 @@ func TestAuditEventRepo_ReadAll_ReturnsAllEvents(t *testing.T) {
 	tx := testutil.NewTestTx(t, testPool)
 	repo := repository.NewAuditEventRepo(tx)
 
-	event := domain.NewAuditEvent("module.registered", "module", "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12", "System", "Registered module: Navigation Array2")
-	event2 := domain.NewAuditEvent("module.registered", "module", "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11", "Commander Chen", "Registered module: Navigation Array")
+	events := make([]*domain.AuditEvent, 10)
+	for i := range events {
+		events[i] = testutil.NewTestAuditEvent(t)
+	}
+	testutil.SeedAuditEvents(t, tx, events)
 
-	err := repo.Create(t.Context(), event)
+	result, err := repo.ReadAll(context.Background())
 	require.NoError(t, err)
-	err = repo.Create(t.Context(), event2)
-	require.NoError(t, err)
-
-	events, err := repo.ReadAll(context.Background())
-	require.NoError(t, err)
-
-	assert.Len(t, events, 2)
+	assert.Len(t, result, 10)
 
 }
 
