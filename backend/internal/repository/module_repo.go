@@ -5,15 +5,16 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/florantos/orbital-command/internal/database"
 	"github.com/florantos/orbital-command/internal/domain"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
 type ModuleRepo struct {
-	db DBTX
+	db database.DBTX
 }
 
-func NewModuleRepo(db DBTX) *ModuleRepo {
+func NewModuleRepo(db database.DBTX) *ModuleRepo {
 	return &ModuleRepo{db: db}
 }
 

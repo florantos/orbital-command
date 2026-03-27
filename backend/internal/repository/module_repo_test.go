@@ -15,8 +15,7 @@ func TestModuleRepo_Create_PersistsAndReturnsModule(t *testing.T) {
 	tx := testutil.NewTestTx(t, testPool)
 	repo := repository.NewModuleRepo(tx)
 
-	module, err := domain.NewModule("Navigation Array", "Controls navigation systems")
-	require.NoError(t, err)
+	module := testutil.NewTestModule(t)
 
 	created, err := repo.Create(context.Background(), module)
 
@@ -34,10 +33,9 @@ func TestModuleRepo_Create_ReturnsErrorOnDuplicateName(t *testing.T) {
 	tx := testutil.NewTestTx(t, testPool)
 	repo := repository.NewModuleRepo(tx)
 
-	module, err := domain.NewModule("Navigation Array", "Controls navigation systems")
-	require.NoError(t, err)
+	module := testutil.NewTestModule(t)
 
-	_, err = repo.Create(context.Background(), module)
+	_, err := repo.Create(context.Background(), module)
 	require.NoError(t, err)
 
 	_, err = repo.Create(context.Background(), module)
@@ -49,20 +47,16 @@ func TestModuleRepo_ReadAll_ReturnsAllModules(t *testing.T) {
 	tx := testutil.NewTestTx(t, testPool)
 	repo := repository.NewModuleRepo(tx)
 
-	module, err := domain.NewModule("Navigation Array", "Controls navigation systems")
-	require.NoError(t, err)
-	_, err = repo.Create(context.Background(), module)
+	modules := make([]*domain.Module, 10)
+	for i := range modules {
+		modules[i] = testutil.NewTestModule(t)
+	}
+	testutil.SeedModules(t, tx, modules)
+
+	result, err := repo.ReadAll(context.Background())
 	require.NoError(t, err)
 
-	module2, err := domain.NewModule("Navigation Array2", "Controls navigation systems2")
-	require.NoError(t, err)
-	_, err = repo.Create(context.Background(), module2)
-	require.NoError(t, err)
-
-	modules, err := repo.ReadAll(context.Background())
-	require.NoError(t, err)
-
-	assert.Len(t, modules, 2)
+	assert.Len(t, result, 10)
 
 }
 func TestModuleRepo_ReadAll_ReturnsEmptyArrayWhenNoModules(t *testing.T) {

@@ -13,6 +13,7 @@ import (
 
 	"github.com/florantos/orbital-command/internal/domain"
 	"github.com/florantos/orbital-command/internal/handler"
+	"github.com/florantos/orbital-command/internal/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -30,13 +31,8 @@ func (m *mockModuleRepo) ReadAll(ctx context.Context) ([]domain.Module, error) {
 	return m.readAllFn(ctx)
 }
 
-func TestCreateModuleHandler_Returns201OnSuccess(t *testing.T) {
-	returnedModule := &domain.Module{
-		ID:          "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
-		Name:        "Navigation Array",
-		Description: "Controls navigation systems",
-		HealthState: domain.HealthStateOperational,
-	}
+func TestModuleHandler_Create_Returns201OnSuccess(t *testing.T) {
+	returnedModule := testutil.NewTestModule(t)
 
 	moduleRepo := &mockModuleRepo{
 		createFn: func(ctx context.Context, module *domain.Module) (*domain.Module, error) {
@@ -79,7 +75,7 @@ func TestCreateModuleHandler_Returns201OnSuccess(t *testing.T) {
 	assert.Equal(t, string(returnedModule.HealthState), response.HealthState)
 }
 
-func TestCreateModuleHandler_Returns400OnMalformedJSON(t *testing.T) {
+func TestModuleHandler_Create_Returns400OnMalformedJSON(t *testing.T) {
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	h := handler.NewHandler(logger, nil, nil)
 
@@ -104,7 +100,7 @@ func TestCreateModuleHandler_Returns400OnMalformedJSON(t *testing.T) {
 	assert.Equal(t, "malformed request body", response.Error)
 }
 
-func TestCreateModuleHandler_Returns409OnDuplicateName(t *testing.T) {
+func TestModuleHandler_Create_Returns409OnDuplicateName(t *testing.T) {
 	moduleRepo := &mockModuleRepo{
 		createFn: func(ctx context.Context, module *domain.Module) (*domain.Module, error) {
 			return nil, fmt.Errorf("create module: %w", domain.ErrDuplicateModuleName)
@@ -138,7 +134,7 @@ func TestCreateModuleHandler_Returns409OnDuplicateName(t *testing.T) {
 
 }
 
-func TestCreateModuleHandler_Returns500OnUnexpectedError(t *testing.T) {
+func TestModuleHandler_Create_Returns500OnUnexpectedError(t *testing.T) {
 	moduleRepo := &mockModuleRepo{
 		createFn: func(ctx context.Context, module *domain.Module) (*domain.Module, error) {
 			return nil, fmt.Errorf("create module: unexpected database error")
@@ -171,7 +167,7 @@ func TestCreateModuleHandler_Returns500OnUnexpectedError(t *testing.T) {
 	assert.Equal(t, "internal server error", response.Error)
 }
 
-func TestCreateModuleHandler_Returns422OnValidationFailure(t *testing.T) {
+func TestModuleHandler_Create_Returns422OnValidationFailure(t *testing.T) {
 	tests := []struct {
 		name           string
 		reqBody        handler.CreateModuleRequest
@@ -258,13 +254,8 @@ func TestCreateModuleHandler_Returns422OnValidationFailure(t *testing.T) {
 	}
 }
 
-func TestCreateModuleHandler_EmitsAuditEventOnSuccess(t *testing.T) {
-	returnedModule := &domain.Module{
-		ID:          "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
-		Name:        "Navigation Array",
-		Description: "Controls navigation systems",
-		HealthState: domain.HealthStateOperational,
-	}
+func TestModuleHandler_Create_EmitsAuditEventOnSuccess(t *testing.T) {
+	returnedModule := testutil.NewTestModule(t)
 
 	moduleRepo := &mockModuleRepo{
 		createFn: func(ctx context.Context, module *domain.Module) (*domain.Module, error) {
@@ -309,7 +300,7 @@ func TestCreateModuleHandler_EmitsAuditEventOnSuccess(t *testing.T) {
 	assert.Equal(t, string(returnedModule.HealthState), response.HealthState)
 }
 
-func TestReadAllModulesHandler_Returns500OnUnexpectedError(t *testing.T) {
+func TestModulesHandler_ReadAll_Returns500OnUnexpectedError(t *testing.T) {
 	moduleRepo := &mockModuleRepo{
 		readAllFn: func(ctx context.Context) ([]domain.Module, error) {
 			return []domain.Module{}, fmt.Errorf("read all modules: unexpected database error")
@@ -335,7 +326,7 @@ func TestReadAllModulesHandler_Returns500OnUnexpectedError(t *testing.T) {
 
 }
 
-func TestReadAllModulesHandler_Returns200(t *testing.T) {
+func TestModulesHandler_ReadAll_Returns200(t *testing.T) {
 	tests := []struct {
 		name  string
 		input []domain.Module
@@ -343,14 +334,8 @@ func TestReadAllModulesHandler_Returns200(t *testing.T) {
 		{
 			name: "returns modules on success",
 			input: []domain.Module{
-				{ID: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
-					Name:        "Navigation Array",
-					Description: "Controls navigation systems",
-					HealthState: domain.HealthStateOperational},
-				{ID: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12",
-					Name:        "Navigation Array2",
-					Description: "Controls navigation systems2",
-					HealthState: domain.HealthStateOperational},
+				*testutil.NewTestModule(t),
+				*testutil.NewTestModule(t),
 			},
 		},
 		{
