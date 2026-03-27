@@ -300,7 +300,7 @@ func TestModuleHandler_Create_EmitsAuditEventOnSuccess(t *testing.T) {
 	assert.Equal(t, string(returnedModule.HealthState), response.HealthState)
 }
 
-func TestModulesHandler_ReadAll_Returns500OnUnexpectedError(t *testing.T) {
+func TestModuleHandler_ReadAll_Returns500OnUnexpectedError(t *testing.T) {
 	moduleRepo := &mockModuleRepo{
 		readAllFn: func(ctx context.Context) ([]domain.Module, error) {
 			return []domain.Module{}, fmt.Errorf("read all modules: unexpected database error")
