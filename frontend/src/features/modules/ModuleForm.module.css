@@ -12,11 +12,11 @@
   outline: none;
   width: 100%;
   transition: all var(--transition-base);
-}
 
-.input:focus {
-  border-color: var(--color-cyan-mid);
-  box-shadow: 0 0 12px rgba(0, 229, 255, 0.08);
+  &:focus {
+    border-color: var(--color-cyan-mid);
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.08);
+  }
 }
 
 .label {
