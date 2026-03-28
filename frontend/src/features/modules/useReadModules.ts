@@ -51,7 +51,6 @@ function useReadModules() {
     controllerRef.current?.abort();
     controllerRef.current = new AbortController();
     void load(controllerRef.current.signal);
-    void load(controllerRef.current.signal);
   }, [load]);
 
   return { modules, loading, error, refetch };
