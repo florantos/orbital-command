@@ -1,6 +1,7 @@
 import { Dialog } from "radix-ui";
 import { useState } from "react";
 
+import { Button } from "../../components/Button/Button";
 import { ModuleForm } from "./ModuleForm";
 import styles from "./ModulePage.module.css";
 import { useReadModules } from "./useReadModules";
@@ -13,10 +14,10 @@ function ModulePage() {
   return (
     <>
       <div className={styles.header}>
-        <span className={styles.moduleCount}>{`${String(modules.length)} Modules`}</span>
+        <span className={styles.count}>{`${String(modules.length)} Modules`}</span>
         <Dialog.Root open={open} onOpenChange={setOpen}>
           <Dialog.Trigger asChild>
-            <button className={styles.registerModuleButton}>+ Register Module</button>
+            <Button mini>+ Register Module</Button>
           </Dialog.Trigger>
           <Dialog.Portal>
             <Dialog.Overlay className={styles.dialogOverlay} />

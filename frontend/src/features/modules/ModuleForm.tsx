@@ -1,6 +1,7 @@
 import { Dialog, VisuallyHidden } from "radix-ui";
 import { useState } from "react";
 
+import { Button } from "../../components/Button/Button";
 import styles from "./ModuleForm.module.css";
 import type { Module } from "./module.types";
 import { useCreateModule } from "./useCreateModule";
@@ -86,14 +87,14 @@ const ModuleForm = ({ onSuccess, onCancel }: ModuleFormProps) => {
 
       {error && <p className={styles.errorButtons}>{error}</p>}
       <div className={styles.buttonRow}>
-        <button className={styles.registerButton} type="submit" disabled={loading}>
+        <Button type="submit" loading={loading}>
           {loading && <span className={styles.spinner}></span>}
           {loading ? "Saving..." : "Register"}
-        </button>
+        </Button>
         <Dialog.Close asChild>
-          <button className={styles.cancelButton} type="button" onClick={onCancel} disabled={loading}>
+          <Button type="button" variant="secondary" onClick={onCancel} disabled={loading}>
             Cancel
-          </button>
+          </Button>
         </Dialog.Close>
       </div>
     </form>
