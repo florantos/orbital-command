@@ -1,0 +1,89 @@
+/* ── base ── */
+.btn {
+  font-family: var(--font-head);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  transition: all var(--transition-base);
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+/* ── size ── */
+.standard {
+  font-size: 13px;
+  padding: 10px 24px;
+}
+
+.mini {
+  font-size: 11px;
+  padding: 5px 12px;
+}
+
+/* ── variants ── */
+.primary {
+  composes: btn, standard;
+  border: 1px solid var(--color-cyan-mid);
+  background: var(--color-cyan-dim);
+  color: var(--color-cyan);
+
+  &:hover {
+    background: rgba(0, 229, 255, 0.15);
+    text-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
+    box-shadow:
+      0 0 20px rgba(0, 229, 255, 0.15),
+      inset 0 0 20px rgba(0, 229, 255, 0.05);
+  }
+}
+
+.secondary {
+  composes: btn, standard;
+  border: 1px solid rgba(142, 170, 204, 0.2);
+  background: transparent;
+  color: var(--text-mid);
+
+  &:hover {
+    background: rgba(142, 170, 204, 0.05);
+    border: 1px solid rgba(142, 170, 204, 0.35);
+    text-shadow: 0 0 8px rgba(142, 170, 204, 0.5);
+    box-shadow:
+      0 0 20px rgba(142, 170, 204, 0.15),
+      inset 0 0 20px rgba(142, 170, 204, 0.05);
+  }
+}
+
+.danger {
+  composes: btn, standard;
+  border: 1px solid rgba(255, 61, 90, 0.3);
+  background: var(--color-red-dim);
+  color: var(--color-red);
+
+  &:hover {
+    background: rgba(255, 61, 90, 0.15);
+    text-shadow: 0 0 8px rgba(255, 61, 90, 0.5);
+    box-shadow:
+      0 0 20px rgba(255, 61, 90, 0.15),
+      inset 0 0 20px rgba(255, 61, 90, 0.05);
+  }
+}
+
+.ghost {
+  composes: btn, standard;
+  border-color: transparent;
+  background: transparent;
+  color: var(--text-mid);
+
+  &:hover {
+    color: var(--text-bright);
+    text-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
+    box-shadow:
+      0 0 20px rgba(0, 229, 255, 0.15),
+      inset 0 0 20px rgba(0, 229, 255, 0.05);
+  }
+}
