@@ -88,7 +88,6 @@ const ModuleForm = ({ onSuccess, onCancel }: ModuleFormProps) => {
       {error && <p className={styles.errorButtons}>{error}</p>}
       <div className={styles.buttonRow}>
         <Button type="submit" loading={loading}>
-          {loading && <span className={styles.spinner}></span>}
           {loading ? "Saving..." : "Register"}
         </Button>
         <Dialog.Close asChild>

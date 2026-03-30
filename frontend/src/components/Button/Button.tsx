@@ -11,10 +11,10 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
 }
 
-function Button({ variant = "primary", mini = false, loading = false, children, ...props }: ButtonProps) {
+function Button({ variant = "primary", mini = false, loading = true, children, ...props }: ButtonProps) {
   return (
     <button className={clsx(styles[variant], { [styles.mini]: mini })} disabled={loading || props.disabled} {...props}>
-      {loading && <span />}
+      {loading && <span className={styles.spinner} />}
       {children}
     </button>
   );

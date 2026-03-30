@@ -36,7 +36,7 @@ function ModulePage() {
         </Dialog.Root>
       </div>
 
-      <div className={styles.moduleList}>
+      <div className={styles.list}>
         {loading && (
           <>
             <div className={styles.moduleList}>
