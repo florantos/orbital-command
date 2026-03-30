@@ -62,43 +62,6 @@
   margin-bottom: 20px;
   letter-spacing: 0.04em;
 }
-.registerButton {
-  font-family: var(--font-head);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 10px 24px;
-  border: 1px solid var(--color-cyan-mid);
-  background: var(--color-cyan-dim);
-  color: var(--color-cyan);
-  border-radius: 2px;
-  cursor: pointer;
-  transition: all var(--transition-base);
-}
-
-.registerButton:hover {
-  background-color: rgba(0, 229, 255, 0.15);
-  box-shadow:
-    0 0 20px rgba(0, 229, 255, 0.15),
-    inset 0 0 20px rgba(0, 229, 255, 0.05);
-  text-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
-}
-
-.cancelButton {
-  composes: registerButton;
-  color: var(--text-mid);
-  background: transparent;
-  border-color: rgba(142, 170, 204, 0.2);
-}
-
-.cancelButton:hover {
-  border-color: rgba(142, 170, 204, 0.35);
-  background: rgba(142, 170, 204, 0.05);
-  box-shadow: none;
-  text-shadow: none;
-}
-
 .buttonRow {
   display: flex;
   flex-wrap: wrap;
@@ -106,6 +69,7 @@
   gap: 12px;
   margin-top: 16px;
 }
+
 @keyframes spin {
   to {
     transform: rotate(360deg);

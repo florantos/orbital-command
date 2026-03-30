@@ -1,3 +1,4 @@
+/* ── header section ── */
 .header {
   display: flex;
   justify-content: space-between;
@@ -5,37 +6,15 @@
   margin-bottom: 14px;
 }
 
-.moduleCount {
+.count {
   font-family: var(--font-data);
-  color: var(--text-dim);
-  font-size: 12px;
+  color: var(--text-mid);
+  font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
-.registerModuleButton {
-  font-family: var(--font-head);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 10px 24px;
-  color: var(--color-cyan);
-  background-color: var(--color-cyan-dim);
-  border-radius: 2px;
-  border: 1px solid var(--color-cyan-mid);
-  cursor: pointer;
-  transition: all var(--transition-base);
-
-  &:hover {
-    background-color: rgba(0, 229, 255, 0.15);
-    box-shadow:
-      0 0 20px rgba(0, 229, 255, 0.15),
-      inset 0 0 20px rgba(0, 229, 255, 0.05);
-    text-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
-  }
-}
-
+/* ── dialog modal ── */
 .dialogOverlay {
   background-color: rgba(0, 0, 0, 0.4);
   position: fixed;
@@ -59,11 +38,14 @@
   animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.moduleList {
+/* ── list section ── */
+
+.list {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
+
 .card {
   display: flex;
   justify-content: space-between;
@@ -206,6 +188,7 @@
 .healthBorderOffline {
   border-left: 2px solid var(--color-health-offline);
 }
+
 @keyframes shimmer {
   0% {
     background-position: 200% 0;

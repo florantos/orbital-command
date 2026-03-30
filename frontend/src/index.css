@@ -20,7 +20,7 @@
   --color-blue: #4488ff;
 
   /* ── Surface Primitives ── */
-  --surface-bg: #010810;
+  --surface-bg: #02111f;
   --surface-panel: rgba(8, 24, 48, 0.6);
   --surface-panel-border: rgba(80, 180, 255, 0.12);
   --surface-panel-glow: rgba(80, 180, 255, 0.04);
@@ -77,10 +77,16 @@
 }
 
 body {
-  background-color: var(--surface-bg);
+  background: var(--surface-bg);
   color: var(--text-bright);
   font-family: var(--font-head);
   font-size: 14px;
   line-height: 1.6;
-  margin: var(--space-5);
+}
+
+#root {
+  padding: 20px;
+}
+button {
+  line-height: normal;
 }
