@@ -22,3 +22,27 @@ func (e *ValidationError) Error() string {
 	}
 	return strings.Join(msgs, ", ")
 }
+
+type Capability string
+
+const (
+	CapabilityDocking             Capability = "docking"
+	CapabilityNavigation          Capability = "navigation"
+	CapabilityHullMonitoring      Capability = "hull-monitoring"
+	CapabilityWaterRecycling      Capability = "water-recycling"
+	CapabilityPowerGeneration     Capability = "power-generation"
+	CapabilityPowerDistribution   Capability = "power-distubution"
+	CapabilityThermalRegulation   Capability = "thermal-regulation"
+	CapabilityAtmosphereRecycling Capability = "atmosphere-recycling"
+)
+
+var validCapabilities = map[Capability]struct{}{
+	CapabilityDocking:             {},
+	CapabilityNavigation:          {},
+	CapabilityHullMonitoring:      {},
+	CapabilityWaterRecycling:      {},
+	CapabilityPowerGeneration:     {},
+	CapabilityPowerDistribution:   {},
+	CapabilityThermalRegulation:   {},
+	CapabilityAtmosphereRecycling: {},
+}
