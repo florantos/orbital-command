@@ -10,6 +10,8 @@ help:
 	@echo "  make db-setup       Create database schema"
 	@echo "  make db-setup-test  Create test database schema"
 	@echo "  make dev            Start the full stack"
+	@echo "  make build          Start the full stack, rebuild images"
+
 	@echo "  make down           Stop containers, keep data"
 	@echo "  make clean          Stop containers, wipe data"
 	@echo "  make test           Run backend tests"
@@ -23,6 +25,9 @@ db-setup-test:
 
 dev:
 	docker compose up
+
+build: 
+	docker compose up --build
 
 down:
 	docker compose down
