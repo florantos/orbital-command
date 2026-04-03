@@ -37,6 +37,7 @@ func NewCrewMember(name string, role Role, qualifications []Capability) (*CrewMe
 		Role:           role,
 		Qualifications: qualifications,
 	}
+
 	err := cm.Validate()
 	if err != nil {
 		return nil, err

@@ -83,3 +83,45 @@ func SeedAuditEvents(t *testing.T, db database.DBTX, auditEvents []*domain.Audit
 		}
 	}
 }
+
+func NewTestCrewMember(t *testing.T, opts ...func(*domain.CrewMember)) *domain.CrewMember {
+	t.Helper()
+	cm, err := domain.NewCrewMember(
+		"Test Crew Member"+uuid.NewString()[:8],
+		domain.RoleEngineer,
+		[]domain.Capability{domain.CapabilityDocking, domain.CapabilityNavigation},
+	)
+	require.NoError(t, err)
+	for _, opt := range opts {
+		opt(cm)
+	}
+	return cm
+}
+
+func SeedCrewMembers(t *testing.T, db database.DBTX, crewMembers []*domain.CrewMember) {
+	t.Helper()
+	crewQuery := `
+		INSERT INTO crew (name, role) 
+		VALUES ($1, $2)
+		RETURNING id
+
+	`
+	capQuery := `
+		INSERT INTO capabilities (name, crew_id)
+		VALUES ($1, $2)
+	`
+
+	for _, cm := range crewMembers {
+		var id string
+		err := db.QueryRow(context.Background(), crewQuery, cm.Name, cm.Role).Scan(&id)
+		if err != nil {
+			t.Fatalf("seeding crew members: %v", err)
+		}
+		for _, c := range cm.Qualifications {
+			_, err := db.Exec(context.Background(), capQuery, c, id)
+			if err != nil {
+				t.Fatalf("seeding crew member capabilities: %v", err)
+			}
+		}
+	}
+}
