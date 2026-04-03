@@ -14,7 +14,6 @@ type AuditEventResponse struct {
 	Detail     string    `json:"detail"`
 	OccurredAt time.Time `json:"occurredAt"`
 }
-
 type ReadAllAuditEventsResponse struct {
 	AuditEvents []AuditEventResponse `json:"auditEvents"`
 }
@@ -22,7 +21,7 @@ type ReadAllAuditEventsResponse struct {
 func (h *Handler) ReadAllAuditEvents(w http.ResponseWriter, r *http.Request) {
 	h.logger.Info("reading all audit events")
 
-	events, err := h.auditEventRepo.ReadAll(r.Context())
+	events, err := h.auditEventRepo.ReadAll(r.Context(), &h.pool)
 	if err != nil {
 		h.logger.Error("failed to read all audit events", "error", err)
 		writeError(w, http.StatusInternalServerError, "internal server error")

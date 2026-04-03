@@ -77,7 +77,7 @@ func (h *Handler) CreateModule(w http.ResponseWriter, r *http.Request) {
 
 	h.logger.Info("creating audit event", "action", event.Action, "entityID", event.EntityID)
 
-	err = h.auditEventRepo.Create(r.Context(), event)
+	err = h.auditEventRepo.Create(r.Context(), &h.pool, event)
 	if err != nil {
 		h.logger.Error("failed to create audit event", "error", err)
 	} else {
