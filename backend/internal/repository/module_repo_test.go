@@ -40,7 +40,6 @@ func TestModuleRepo_Create_ReturnsErrorOnDuplicateName(t *testing.T) {
 
 	_, err = repo.Create(context.Background(), module)
 	assert.ErrorIs(t, err, domain.ErrDuplicateModuleName)
-
 }
 
 func TestModuleRepo_ReadAll_ReturnsAllModules(t *testing.T) {
