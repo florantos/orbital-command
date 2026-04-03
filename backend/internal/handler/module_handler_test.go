@@ -11,6 +11,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/florantos/orbital-command/internal/database"
 	"github.com/florantos/orbital-command/internal/domain"
 	"github.com/florantos/orbital-command/internal/handler"
 	"github.com/florantos/orbital-command/internal/testutil"
@@ -40,7 +41,7 @@ func TestModuleHandler_Create_Returns201OnSuccess(t *testing.T) {
 		},
 	}
 	auditEventRepo := &mockAuditEventRepo{
-		createFn: func(ctx context.Context, event *domain.AuditEvent) error {
+		createFn: func(ctx context.Context, db database.DBTX, event *domain.AuditEvent) error {
 			return nil
 		},
 	}
@@ -254,52 +255,6 @@ func TestModuleHandler_Create_Returns422OnValidationFailure(t *testing.T) {
 	}
 }
 
-func TestModuleHandler_Create_EmitsAuditEventOnSuccess(t *testing.T) {
-	returnedModule := testutil.NewTestModule(t)
-
-	moduleRepo := &mockModuleRepo{
-		createFn: func(ctx context.Context, module *domain.Module) (*domain.Module, error) {
-			return returnedModule, nil
-		},
-	}
-
-	auditEventRepo := &mockAuditEventRepo{
-		createFn: func(ctx context.Context, event *domain.AuditEvent) error {
-			return nil
-		},
-	}
-
-	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	h := handler.NewHandler(logger, moduleRepo, auditEventRepo)
-
-	body := handler.CreateModuleRequest{
-		Name:        "Navigation Array",
-		Description: "Controls navigation systems",
-	}
-	bodyBytes, err := json.Marshal(body)
-	require.NoError(t, err)
-
-	r := httptest.NewRequest(http.MethodPost, "/modules", bytes.NewReader(bodyBytes))
-	r.Header.Set("Content-Type", "application/json")
-	w := httptest.NewRecorder()
-
-	h.CreateModule(w, r)
-
-	res := w.Result()
-	assert.Equal(t, http.StatusCreated, res.StatusCode)
-	assert.Equal(t, "application/json", res.Header.Get("Content-Type"))
-	assert.True(t, auditEventRepo.called)
-
-	var response handler.ModuleResponse
-	err = json.Unmarshal(w.Body.Bytes(), &response)
-	require.NoError(t, err)
-
-	assert.Equal(t, returnedModule.ID, response.ID)
-	assert.Equal(t, returnedModule.Name, response.Name)
-	assert.Equal(t, returnedModule.Description, response.Description)
-	assert.Equal(t, string(returnedModule.HealthState), response.HealthState)
-}
-
 func TestModuleHandler_ReadAll_Returns500OnUnexpectedError(t *testing.T) {
 	moduleRepo := &mockModuleRepo{
 		readAllFn: func(ctx context.Context) ([]domain.Module, error) {
@@ -352,7 +307,7 @@ func TestModulesHandler_ReadAll_Returns200(t *testing.T) {
 				},
 			}
 			auditEventRepo := &mockAuditEventRepo{
-				createFn: func(ctx context.Context, event *domain.AuditEvent) error {
+				createFn: func(ctx context.Context, db database.DBTX, event *domain.AuditEvent) error {
 					return nil
 				},
 			}
@@ -377,4 +332,50 @@ func TestModulesHandler_ReadAll_Returns200(t *testing.T) {
 		})
 	}
 
+}
+
+func TestModuleHandler_Create_EmitsAuditEventOnSuccess(t *testing.T) {
+	returnedModule := testutil.NewTestModule(t)
+
+	moduleRepo := &mockModuleRepo{
+		createFn: func(ctx context.Context, module *domain.Module) (*domain.Module, error) {
+			return returnedModule, nil
+		},
+	}
+
+	auditEventRepo := &mockAuditEventRepo{
+		createFn: func(ctx context.Context, db database.DBTX, event *domain.AuditEvent) error {
+			return nil
+		},
+	}
+
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
+	h := handler.NewHandler(logger, moduleRepo, auditEventRepo)
+
+	body := handler.CreateModuleRequest{
+		Name:        "Navigation Array",
+		Description: "Controls navigation systems",
+	}
+	bodyBytes, err := json.Marshal(body)
+	require.NoError(t, err)
+
+	r := httptest.NewRequest(http.MethodPost, "/modules", bytes.NewReader(bodyBytes))
+	r.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+
+	h.CreateModule(w, r)
+
+	res := w.Result()
+	assert.Equal(t, http.StatusCreated, res.StatusCode)
+	assert.Equal(t, "application/json", res.Header.Get("Content-Type"))
+	assert.True(t, auditEventRepo.called)
+
+	var response handler.ModuleResponse
+	err = json.Unmarshal(w.Body.Bytes(), &response)
+	require.NoError(t, err)
+
+	assert.Equal(t, returnedModule.ID, response.ID)
+	assert.Equal(t, returnedModule.Name, response.Name)
+	assert.Equal(t, returnedModule.Description, response.Description)
+	assert.Equal(t, string(returnedModule.HealthState), response.HealthState)
 }

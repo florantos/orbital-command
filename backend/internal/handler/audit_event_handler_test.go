@@ -10,6 +10,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/florantos/orbital-command/internal/database"
 	"github.com/florantos/orbital-command/internal/domain"
 	"github.com/florantos/orbital-command/internal/handler"
 	"github.com/florantos/orbital-command/internal/testutil"
@@ -18,18 +19,18 @@ import (
 )
 
 type mockAuditEventRepo struct {
-	createFn  func(ctx context.Context, event *domain.AuditEvent) error
-	readAllFn func(ctx context.Context) ([]domain.AuditEvent, error)
+	createFn  func(ctx context.Context, db database.DBTX, event *domain.AuditEvent) error
+	readAllFn func(ctx context.Context, db database.DBTX) ([]domain.AuditEvent, error)
 	called    bool
 }
 
-func (m *mockAuditEventRepo) Create(ctx context.Context, event *domain.AuditEvent) error {
+func (m *mockAuditEventRepo) Create(ctx context.Context, db database.DBTX, event *domain.AuditEvent) error {
 	m.called = true
-	return m.createFn(ctx, event)
+	return m.createFn(ctx, db, event)
 }
 
-func (m *mockAuditEventRepo) ReadAll(ctx context.Context) ([]domain.AuditEvent, error) {
-	return m.readAllFn(ctx)
+func (m *mockAuditEventRepo) ReadAll(ctx context.Context, db database.DBTX) ([]domain.AuditEvent, error) {
+	return m.readAllFn(ctx, db)
 }
 
 func TestAuditEventHandler_ReadAll_Returns200(t *testing.T) {
@@ -54,7 +55,7 @@ func TestAuditEventHandler_ReadAll_Returns200(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 
 			auditEventRepo := &mockAuditEventRepo{
-				readAllFn: func(ctx context.Context) ([]domain.AuditEvent, error) {
+				readAllFn: func(ctx context.Context, db database.DBTX) ([]domain.AuditEvent, error) {
 					return tt.input, nil
 				},
 			}
@@ -82,7 +83,7 @@ func TestAuditEventHandler_ReadAll_Returns200(t *testing.T) {
 }
 func TestAuditEventHandler_ReadAll_Returns500OnUnexpectedError(t *testing.T) {
 	auditEventRepo := &mockAuditEventRepo{
-		readAllFn: func(ctx context.Context) ([]domain.AuditEvent, error) {
+		readAllFn: func(ctx context.Context, db database.DBTX) ([]domain.AuditEvent, error) {
 			return []domain.AuditEvent{}, fmt.Errorf("read all audit events: unexpected database error")
 		},
 	}

@@ -13,10 +13,10 @@ import (
 
 func TestAuditEventRepo_Create_PersistsAuditEvent(t *testing.T) {
 	tx := testutil.NewTestTx(t, testPool)
-	repo := repository.NewAuditEventRepo(tx)
+	repo := repository.NewAuditEventRepo()
 
 	event := testutil.NewTestAuditEvent(t)
-	err := repo.Create(context.Background(), event)
+	err := repo.Create(context.Background(), tx, event)
 
 	require.NoError(t, err)
 
@@ -24,7 +24,7 @@ func TestAuditEventRepo_Create_PersistsAuditEvent(t *testing.T) {
 
 func TestAuditEventRepo_ReadAll_ReturnsAllEvents(t *testing.T) {
 	tx := testutil.NewTestTx(t, testPool)
-	repo := repository.NewAuditEventRepo(tx)
+	repo := repository.NewAuditEventRepo()
 
 	events := make([]*domain.AuditEvent, 10)
 	for i := range events {
@@ -32,7 +32,7 @@ func TestAuditEventRepo_ReadAll_ReturnsAllEvents(t *testing.T) {
 	}
 	testutil.SeedAuditEvents(t, tx, events)
 
-	result, err := repo.ReadAll(context.Background())
+	result, err := repo.ReadAll(context.Background(), tx)
 	require.NoError(t, err)
 	assert.Len(t, result, 10)
 
@@ -40,9 +40,9 @@ func TestAuditEventRepo_ReadAll_ReturnsAllEvents(t *testing.T) {
 
 func TestAuditEventRepo_ReadAll_ReturnsEmptyArrayWhenNoEvents(t *testing.T) {
 	tx := testutil.NewTestTx(t, testPool)
-	repo := repository.NewAuditEventRepo(tx)
+	repo := repository.NewAuditEventRepo()
 
-	events, err := repo.ReadAll(context.Background())
+	events, err := repo.ReadAll(context.Background(), tx)
 	require.NoError(t, err)
 
 	assert.NotNil(t, events)

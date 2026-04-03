@@ -31,7 +31,7 @@ func main() {
 	defer pool.Close()
 
 	moduleRepo := repository.NewModuleRepo(pool)
-	auditRepo := repository.NewAuditEventRepo(pool)
+	auditRepo := repository.NewAuditEventRepo()
 
 	h := handler.NewHandler(logger, moduleRepo, auditRepo)
 
