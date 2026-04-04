@@ -10,8 +10,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-type CrewRepo struct {
-}
+type CrewRepo struct{}
 
 func NewCrewRepo() *CrewRepo {
 	return &CrewRepo{}
@@ -36,9 +35,9 @@ func (r *CrewRepo) Create(ctx context.Context, db database.DBTX, cm *domain.Crew
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
-			return nil, fmt.Errorf("create crew member %w", domain.ErrDuplicateCrewMemberName)
+			return nil, fmt.Errorf("create crew member: %w", domain.ErrDuplicateCrewMemberName)
 		}
-		return nil, fmt.Errorf("created crew member %w", err)
+		return nil, fmt.Errorf("created crew member: %w", err)
 	}
 
 	capNames := make([]string, len(cm.Qualifications))
