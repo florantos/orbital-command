@@ -84,3 +84,12 @@ func TestNewModule_DescriptionValidation(t *testing.T) {
 	}
 
 }
+
+func TestNewModule_MultipleInvalidFields(t *testing.T) {
+	_, err := domain.NewModule("", "")
+	require.Error(t, err)
+	var ve *domain.ValidationError
+	require.ErrorAs(t, err, &ve)
+	assert.NotEmpty(t, ve.Fields["name"])
+	assert.NotEmpty(t, ve.Fields["description"])
+}
