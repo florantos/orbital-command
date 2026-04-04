@@ -11,6 +11,7 @@ import (
 	applogger "github.com/florantos/orbital-command/internal/logger"
 	"github.com/florantos/orbital-command/internal/middleware"
 	"github.com/florantos/orbital-command/internal/repository"
+	"github.com/florantos/orbital-command/internal/service"
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -32,8 +33,11 @@ func main() {
 
 	moduleRepo := repository.NewModuleRepo(pool)
 	auditRepo := repository.NewAuditEventRepo()
+	crewRepo := repository.NewCrewRepo()
 
-	h := handler.NewHandler(logger, moduleRepo, auditRepo)
+	crewService := service.NewCrewService(pool, logger, crewRepo, auditRepo)
+
+	h := handler.NewHandler(logger, pool, moduleRepo, auditRepo, crewService)
 
 	r := chi.NewRouter()
 	r.Use(middleware.CORS(cfg.CORSAllowedOrigin))
@@ -41,7 +45,7 @@ func main() {
 	r.Get("/health", h.Health)
 	r.Post("/modules", h.CreateModule)
 	r.Get("/modules", h.ReadAllModules)
-
+	r.Post("/crew", h.CreateCrewMember)
 	r.Get("/audit-events", h.ReadAllAuditEvents)
 
 	logger.Info("Initializing server...", "port", cfg.Port)

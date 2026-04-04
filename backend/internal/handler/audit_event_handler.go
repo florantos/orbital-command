@@ -21,7 +21,7 @@ type ReadAllAuditEventsResponse struct {
 func (h *Handler) ReadAllAuditEvents(w http.ResponseWriter, r *http.Request) {
 	h.logger.Info("reading all audit events")
 
-	events, err := h.auditEventRepo.ReadAll(r.Context(), &h.pool)
+	events, err := h.auditEventRepo.ReadAll(r.Context(), h.pool)
 	if err != nil {
 		h.logger.Error("failed to read all audit events", "error", err)
 		writeError(w, http.StatusInternalServerError, "internal server error")
