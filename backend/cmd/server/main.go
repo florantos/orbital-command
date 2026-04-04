@@ -31,21 +31,25 @@ func main() {
 	}
 	defer pool.Close()
 
-	moduleRepo := repository.NewModuleRepo(pool)
+	moduleRepo := repository.NewModuleRepo()
 	auditRepo := repository.NewAuditEventRepo()
 	crewRepo := repository.NewCrewRepo()
 
 	crewService := service.NewCrewService(pool, logger, crewRepo, auditRepo)
+	moduleService := service.NewModuleService(pool, logger, moduleRepo, auditRepo)
 
-	h := handler.NewHandler(logger, pool, moduleRepo, auditRepo, crewService)
+	h := handler.NewHandler(logger, pool, moduleService, auditRepo, crewService)
 
 	r := chi.NewRouter()
 	r.Use(middleware.CORS(cfg.CORSAllowedOrigin))
 
 	r.Get("/health", h.Health)
+
 	r.Post("/modules", h.CreateModule)
 	r.Get("/modules", h.ReadAllModules)
+
 	r.Post("/crew", h.CreateCrewMember)
+
 	r.Get("/audit-events", h.ReadAllAuditEvents)
 
 	logger.Info("Initializing server...", "port", cfg.Port)
