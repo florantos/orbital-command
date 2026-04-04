@@ -74,3 +74,5 @@ func (cm *CrewMember) Validate() error {
 	}
 	return nil
 }
+
+/// duplicate check for qualas

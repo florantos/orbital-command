@@ -103,3 +103,13 @@ func TestNewCrewMember_QualificationsValidation(t *testing.T) {
 		})
 	}
 }
+
+func TestNewCrewMember_MultipleInvalidFields(t *testing.T) {
+	_, err := domain.NewCrewMember("", "invalid-role", []domain.Capability{})
+	require.Error(t, err)
+	var ve *domain.ValidationError
+	require.ErrorAs(t, err, &ve)
+	assert.NotEmpty(t, ve.Fields["name"])
+	assert.NotEmpty(t, ve.Fields["role"])
+	assert.NotEmpty(t, ve.Fields["qualifications"])
+}
