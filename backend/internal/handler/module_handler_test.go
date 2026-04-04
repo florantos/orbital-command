@@ -47,7 +47,7 @@ func TestModuleHandler_Create_Returns201OnSuccess(t *testing.T) {
 	}
 
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	h := handler.NewHandler(logger, moduleRepo, auditEventRepo)
+	h := handler.NewHandler(logger, nil, moduleRepo, auditEventRepo, nil)
 
 	body := handler.CreateModuleRequest{
 		Name:        "Navigation Array",
@@ -78,7 +78,7 @@ func TestModuleHandler_Create_Returns201OnSuccess(t *testing.T) {
 
 func TestModuleHandler_Create_Returns400OnMalformedJSON(t *testing.T) {
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	h := handler.NewHandler(logger, nil, nil)
+	h := handler.NewHandler(logger, nil, nil, nil, nil)
 
 	body := `{ Name: "Navigation Array, Description: "Controls navigation systems`
 
@@ -109,7 +109,7 @@ func TestModuleHandler_Create_Returns409OnDuplicateName(t *testing.T) {
 	}
 
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	h := handler.NewHandler(logger, moduleRepo, nil)
+	h := handler.NewHandler(logger, nil, moduleRepo, nil, nil)
 
 	body := handler.CreateModuleRequest{
 		Name:        "Navigation Array",
@@ -143,7 +143,7 @@ func TestModuleHandler_Create_Returns500OnUnexpectedError(t *testing.T) {
 	}
 
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	h := handler.NewHandler(logger, moduleRepo, nil)
+	h := handler.NewHandler(logger, nil, moduleRepo, nil, nil)
 
 	body := handler.CreateModuleRequest{
 		Name:        "Navigation Array",
@@ -227,7 +227,7 @@ func TestModuleHandler_Create_Returns422OnValidationFailure(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-			h := handler.NewHandler(logger, nil, nil)
+			h := handler.NewHandler(logger, nil, nil, nil, nil)
 
 			bodyBytes, err := json.Marshal(tt.reqBody)
 			require.NoError(t, err)
@@ -263,7 +263,7 @@ func TestModuleHandler_ReadAll_Returns500OnUnexpectedError(t *testing.T) {
 	}
 
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	h := handler.NewHandler(logger, moduleRepo, nil)
+	h := handler.NewHandler(logger, nil, moduleRepo, nil, nil)
 
 	r := httptest.NewRequest(http.MethodGet, "/modules", nil)
 	w := httptest.NewRecorder()
@@ -313,7 +313,7 @@ func TestModulesHandler_ReadAll_Returns200(t *testing.T) {
 			}
 
 			logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-			h := handler.NewHandler(logger, moduleRepo, auditEventRepo)
+			h := handler.NewHandler(logger, nil, moduleRepo, auditEventRepo, nil)
 
 			r := httptest.NewRequest(http.MethodGet, "/modules", nil)
 			w := httptest.NewRecorder()
@@ -350,7 +350,7 @@ func TestModuleHandler_Create_EmitsAuditEventOnSuccess(t *testing.T) {
 	}
 
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	h := handler.NewHandler(logger, moduleRepo, auditEventRepo)
+	h := handler.NewHandler(logger, nil, moduleRepo, auditEventRepo, nil)
 
 	body := handler.CreateModuleRequest{
 		Name:        "Navigation Array",

@@ -18,16 +18,19 @@ type AuditEventRepository interface {
 
 type Handler struct {
 	logger         *slog.Logger
-	pool           pgxpool.Pool
+	pool           *pgxpool.Pool
 	moduleRepo     ModuleRepository
 	auditEventRepo AuditEventRepository
+	crewService    CrewService
 }
 
-func NewHandler(logger *slog.Logger, moduleRepo ModuleRepository, auditEventRepo AuditEventRepository) *Handler {
+func NewHandler(logger *slog.Logger, pool *pgxpool.Pool, moduleRepo ModuleRepository, auditEventRepo AuditEventRepository, crewService CrewService) *Handler {
 	return &Handler{
 		logger:         logger,
+		pool:           pool,
 		moduleRepo:     moduleRepo,
 		auditEventRepo: auditEventRepo,
+		crewService:    crewService,
 	}
 }
 

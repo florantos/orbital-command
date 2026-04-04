@@ -61,7 +61,7 @@ func TestAuditEventHandler_ReadAll_Returns200(t *testing.T) {
 			}
 
 			logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-			h := handler.NewHandler(logger, nil, auditEventRepo)
+			h := handler.NewHandler(logger, nil, nil, auditEventRepo, nil)
 
 			r := httptest.NewRequest(http.MethodGet, "/audit-events", nil)
 			w := httptest.NewRecorder()
@@ -89,7 +89,7 @@ func TestAuditEventHandler_ReadAll_Returns500OnUnexpectedError(t *testing.T) {
 	}
 
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	h := handler.NewHandler(logger, nil, auditEventRepo)
+	h := handler.NewHandler(logger, nil, nil, auditEventRepo, nil)
 
 	r := httptest.NewRequest(http.MethodGet, "/audit-events", nil)
 	w := httptest.NewRecorder()
