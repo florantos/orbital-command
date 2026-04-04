@@ -18,6 +18,12 @@ func TestMain(m *testing.M) {
 		log.Fatalf("failed to create test pool: %v", err)
 	}
 
+	_, err = testPool.Exec(context.Background(),
+		"TRUNCATE TABLE crew_capabilities, crew, audit_events, modules RESTART IDENTITY CASCADE")
+	if err != nil {
+		log.Fatalf("failed to truncate test database: %v", err)
+	}
+
 	code := m.Run()
 
 	testPool.Close()
