@@ -23,8 +23,8 @@ type CrewService struct {
 	auditRepo AuditEventRepository
 }
 
-func NewCrewService(pool *pgxpool.Pool, crewRepo CrewRepository, auditRepo AuditEventRepository) *CrewService {
-	return &CrewService{pool: pool, crewRepo: crewRepo, auditRepo: auditRepo}
+func NewCrewService(pool *pgxpool.Pool, logger *slog.Logger, crewRepo CrewRepository, auditRepo AuditEventRepository) *CrewService {
+	return &CrewService{pool: pool, logger: logger, crewRepo: crewRepo, auditRepo: auditRepo}
 }
 
 func (s *CrewService) Create(ctx context.Context, name string, role domain.Role, qualifications []domain.Capability) (*domain.CrewMember, error) {

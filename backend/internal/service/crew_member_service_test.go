@@ -3,6 +3,8 @@ package service_test
 import (
 	"context"
 	"fmt"
+	"io"
+	"log/slog"
 	"testing"
 
 	"github.com/florantos/orbital-command/internal/database"
@@ -25,8 +27,9 @@ func (m *mockAuditEventRepo) Create(ctx context.Context, db database.DBTX, event
 func TestCrewService_Create_Success(t *testing.T) {
 	crewRepo := repository.NewCrewRepo()
 	auditRepo := repository.NewAuditEventRepo()
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 
-	svc := service.NewCrewService(testPool, crewRepo, auditRepo)
+	svc := service.NewCrewService(testPool, logger, crewRepo, auditRepo)
 
 	name := "John Snow " + uuid.NewString()[:8]
 
@@ -38,10 +41,6 @@ func TestCrewService_Create_Success(t *testing.T) {
 	)
 
 	require.NoError(t, err)
-	assert.NotEmpty(t, created.ID)
-	assert.Equal(t, name, created.Name)
-	assert.Equal(t, domain.RoleEngineer, created.Role)
-	assert.Len(t, created.Qualifications, 2)
 
 	t.Cleanup(func() {
 		_, err := testPool.Exec(context.Background(), "DELETE FROM crew WHERE id = $1", created.ID)
@@ -50,10 +49,16 @@ func TestCrewService_Create_Success(t *testing.T) {
 		}
 	})
 
+	assert.NotEmpty(t, created.ID)
+	assert.Equal(t, name, created.Name)
+	assert.Equal(t, domain.RoleEngineer, created.Role)
+	assert.Len(t, created.Qualifications, 2)
+
 }
 
 func TestCrewService_Create_RollsBackOnAuditFailure(t *testing.T) {
 	crewRepo := repository.NewCrewRepo()
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 
 	auditRepo := &mockAuditEventRepo{
 		createFn: func(ctx context.Context, db database.DBTX, event *domain.AuditEvent) error {
@@ -61,7 +66,7 @@ func TestCrewService_Create_RollsBackOnAuditFailure(t *testing.T) {
 		},
 	}
 
-	svc := service.NewCrewService(testPool, crewRepo, auditRepo)
+	svc := service.NewCrewService(testPool, logger, crewRepo, auditRepo)
 
 	name := "John Snow " + uuid.NewString()[:8]
 	_, err := svc.Create(
@@ -87,8 +92,9 @@ func TestCrewService_Create_RollsBackOnAuditFailure(t *testing.T) {
 func TestCrewService_Create_RollsBackOnCrewFailure(t *testing.T) {
 	crewRepo := repository.NewCrewRepo()
 	auditRepo := repository.NewAuditEventRepo()
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 
-	svc := service.NewCrewService(testPool, crewRepo, auditRepo)
+	svc := service.NewCrewService(testPool, logger, crewRepo, auditRepo)
 
 	name := "John Snow " + uuid.NewString()[:8]
 
