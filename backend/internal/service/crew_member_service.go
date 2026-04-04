@@ -38,6 +38,7 @@ func (s *CrewService) Create(ctx context.Context, name string, role domain.Role,
 
 		}
 	}()
+	s.logger.Info("creating crew member", "name", name)
 
 	crewMember, err := domain.NewCrewMember(name, role, qualifications)
 	if err != nil {
@@ -51,7 +52,7 @@ func (s *CrewService) Create(ctx context.Context, name string, role domain.Role,
 
 	event := domain.NewAuditEvent("crew.registered", "crew", created.ID, "Commander", fmt.Sprintf("Registered crew member: %s", created.Name))
 	if err := s.auditRepo.Create(ctx, tx, event); err != nil {
-		return nil, fmt.Errorf("create crew member: %w", err)
+		return nil, fmt.Errorf("failed to create audit event: %w", err)
 	}
 
 	err = tx.Commit(ctx)
