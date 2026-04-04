@@ -13,11 +13,11 @@ import (
 
 func TestModuleRepo_Create_PersistsAndReturnsModule(t *testing.T) {
 	tx := testutil.NewTestTx(t, testPool)
-	repo := repository.NewModuleRepo(tx)
+	repo := repository.NewModuleRepo()
 
 	module := testutil.NewTestModule(t)
 
-	created, err := repo.Create(context.Background(), module)
+	created, err := repo.Create(context.Background(), tx, module)
 
 	require.NoError(t, err)
 
@@ -31,20 +31,20 @@ func TestModuleRepo_Create_PersistsAndReturnsModule(t *testing.T) {
 
 func TestModuleRepo_Create_ReturnsErrorOnDuplicateName(t *testing.T) {
 	tx := testutil.NewTestTx(t, testPool)
-	repo := repository.NewModuleRepo(tx)
+	repo := repository.NewModuleRepo()
 
 	module := testutil.NewTestModule(t)
 
-	_, err := repo.Create(context.Background(), module)
+	_, err := repo.Create(context.Background(), tx, module)
 	require.NoError(t, err)
 
-	_, err = repo.Create(context.Background(), module)
+	_, err = repo.Create(context.Background(), tx, module)
 	assert.ErrorIs(t, err, domain.ErrDuplicateModuleName)
 }
 
 func TestModuleRepo_ReadAll_ReturnsAllModules(t *testing.T) {
 	tx := testutil.NewTestTx(t, testPool)
-	repo := repository.NewModuleRepo(tx)
+	repo := repository.NewModuleRepo()
 
 	modules := make([]*domain.Module, 10)
 	for i := range modules {
@@ -52,17 +52,16 @@ func TestModuleRepo_ReadAll_ReturnsAllModules(t *testing.T) {
 	}
 	testutil.SeedModules(t, tx, modules)
 
-	result, err := repo.ReadAll(context.Background())
+	result, err := repo.ReadAll(context.Background(), tx)
 	require.NoError(t, err)
 
 	assert.Len(t, result, 10)
 
 }
 func TestModuleRepo_ReadAll_ReturnsEmptyArrayWhenNoModules(t *testing.T) {
-	tx := testutil.NewTestTx(t, testPool)
-	repo := repository.NewModuleRepo(tx)
+	repo := repository.NewModuleRepo()
 
-	modules, err := repo.ReadAll(context.Background())
+	modules, err := repo.ReadAll(context.Background(), testPool)
 	require.NoError(t, err)
 
 	assert.NotNil(t, modules)
