@@ -10,15 +10,13 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-type ModuleRepo struct {
-	db database.DBTX
+type ModuleRepo struct{}
+
+func NewModuleRepo() *ModuleRepo {
+	return &ModuleRepo{}
 }
 
-func NewModuleRepo(db database.DBTX) *ModuleRepo {
-	return &ModuleRepo{db: db}
-}
-
-func (r *ModuleRepo) Create(ctx context.Context, module *domain.Module) (*domain.Module, error) {
+func (r *ModuleRepo) Create(ctx context.Context, db database.DBTX, module *domain.Module) (*domain.Module, error) {
 	query := `
 		INSERT INTO modules (name, description, health_state)
 		VALUES ($1, $2, $3)
@@ -27,7 +25,7 @@ func (r *ModuleRepo) Create(ctx context.Context, module *domain.Module) (*domain
 
 	created := &domain.Module{}
 
-	err := r.db.QueryRow(ctx, query, module.Name, module.Description, module.HealthState).Scan(
+	err := db.QueryRow(ctx, query, module.Name, module.Description, module.HealthState).Scan(
 		&created.ID,
 		&created.Name,
 		&created.Description,
@@ -46,7 +44,7 @@ func (r *ModuleRepo) Create(ctx context.Context, module *domain.Module) (*domain
 	return created, nil
 }
 
-func (r *ModuleRepo) ReadAll(ctx context.Context) ([]domain.Module, error) {
+func (r *ModuleRepo) ReadAll(ctx context.Context, db database.DBTX) ([]domain.Module, error) {
 	query := `
 		SELECT id, name, description, health_state, created_at
 		FROM modules
@@ -59,7 +57,7 @@ func (r *ModuleRepo) ReadAll(ctx context.Context) ([]domain.Module, error) {
 				WHEN 'operational'	THEN 5
 		END
 	`
-	rows, err := r.db.Query(ctx, query)
+	rows, err := db.Query(ctx, query)
 	if err != nil {
 		return nil, fmt.Errorf("read all modules: %w", err)
 	}
