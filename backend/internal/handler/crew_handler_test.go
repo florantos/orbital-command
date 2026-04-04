@@ -189,6 +189,7 @@ func TestCrewHandler_Create_Returns422OnValidationFailure(t *testing.T) {
 		})
 	}
 }
+
 func TestCrewHandler_Create_Returns500OnUnexpectedError(t *testing.T) {
 	crewService := &mockCrewService{
 		createFn: func(ctx context.Context, name string, role domain.Role, qualifications []domain.Capability) (*domain.CrewMember, error) {

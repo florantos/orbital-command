@@ -40,14 +40,14 @@ func TestCrewService_Create_Success(t *testing.T) {
 		[]domain.Capability{domain.CapabilityDocking, domain.CapabilityNavigation},
 	)
 
-	require.NoError(t, err)
-
 	t.Cleanup(func() {
 		_, err := testPool.Exec(context.Background(), "DELETE FROM crew WHERE id = $1", created.ID)
 		if err != nil {
 			t.Errorf("failed to clean up crew member: %v", err)
 		}
 	})
+
+	require.NoError(t, err)
 
 	assert.NotEmpty(t, created.ID)
 	assert.Equal(t, name, created.Name)
@@ -104,13 +104,15 @@ func TestCrewService_Create_RollsBackOnCrewFailure(t *testing.T) {
 		domain.RoleEngineer,
 		[]domain.Capability{domain.CapabilityDocking},
 	)
-	require.NoError(t, err)
+
 	t.Cleanup(func() {
 		_, err := testPool.Exec(context.Background(), "DELETE FROM crew WHERE id = $1", firstCreated.ID)
 		if err != nil {
 			t.Errorf("failed to clean up crew member: %v", err)
 		}
 	})
+
+	require.NoError(t, err)
 
 	_, err = svc.Create(
 		context.Background(),
