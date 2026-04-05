@@ -10,7 +10,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/florantos/orbital-command/internal/database"
 	"github.com/florantos/orbital-command/internal/domain"
 	"github.com/florantos/orbital-command/internal/handler"
 	"github.com/florantos/orbital-command/internal/testutil"
@@ -18,19 +17,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type mockAuditEventRepo struct {
-	createFn  func(ctx context.Context, db database.DBTX, event *domain.AuditEvent) error
-	readAllFn func(ctx context.Context, db database.DBTX) ([]domain.AuditEvent, error)
-	called    bool
+type mockAuditEventService struct {
+	readAllFn func(ctx context.Context) ([]domain.AuditEvent, error)
 }
 
-func (m *mockAuditEventRepo) Create(ctx context.Context, db database.DBTX, event *domain.AuditEvent) error {
-	m.called = true
-	return m.createFn(ctx, db, event)
-}
-
-func (m *mockAuditEventRepo) ReadAll(ctx context.Context, db database.DBTX) ([]domain.AuditEvent, error) {
-	return m.readAllFn(ctx, db)
+func (m *mockAuditEventService) ReadAll(ctx context.Context) ([]domain.AuditEvent, error) {
+	return m.readAllFn(ctx)
 }
 
 func TestAuditEventHandler_ReadAll_Returns200(t *testing.T) {
@@ -54,14 +46,14 @@ func TestAuditEventHandler_ReadAll_Returns200(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			auditEventRepo := &mockAuditEventRepo{
-				readAllFn: func(ctx context.Context, db database.DBTX) ([]domain.AuditEvent, error) {
+			auditEventService := &mockAuditEventService{
+				readAllFn: func(ctx context.Context) ([]domain.AuditEvent, error) {
 					return tt.input, nil
 				},
 			}
 
 			logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-			h := handler.NewHandler(logger, nil, nil, auditEventRepo, nil)
+			h := handler.NewAuditHandler(logger, auditEventService)
 
 			r := httptest.NewRequest(http.MethodGet, "/audit-events", nil)
 			w := httptest.NewRecorder()
@@ -82,14 +74,14 @@ func TestAuditEventHandler_ReadAll_Returns200(t *testing.T) {
 
 }
 func TestAuditEventHandler_ReadAll_Returns500OnUnexpectedError(t *testing.T) {
-	auditEventRepo := &mockAuditEventRepo{
-		readAllFn: func(ctx context.Context, db database.DBTX) ([]domain.AuditEvent, error) {
+	auditEventService := &mockAuditEventService{
+		readAllFn: func(ctx context.Context) ([]domain.AuditEvent, error) {
 			return []domain.AuditEvent{}, fmt.Errorf("read all audit events: unexpected database error")
 		},
 	}
 
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	h := handler.NewHandler(logger, nil, nil, auditEventRepo, nil)
+	h := handler.NewAuditHandler(logger, auditEventService)
 
 	r := httptest.NewRequest(http.MethodGet, "/audit-events", nil)
 	w := httptest.NewRecorder()

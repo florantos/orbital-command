@@ -34,7 +34,7 @@ func TestCrewHandler_Create_Returns201OnSuccess(t *testing.T) {
 	}
 
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	h := handler.NewHandler(logger, nil, nil, nil, crewService)
+	h := handler.NewCrewHandler(logger, crewService)
 
 	body := handler.CreateCrewMemberRequest{
 		Name:           "John Snow",
@@ -71,8 +71,9 @@ func TestCrewHandler_Create_Returns201OnSuccess(t *testing.T) {
 }
 
 func TestCrewHandler_Create_Returns400OnMalformedJSON(t *testing.T) {
+
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	h := handler.NewHandler(logger, nil, nil, nil, nil)
+	h := handler.NewCrewHandler(logger, nil)
 
 	body := `{ Name: "John Snow, Role: "engineer`
 
@@ -104,7 +105,7 @@ func TestCrewHandler_Create_Returns409OnDuplicateName(t *testing.T) {
 	}
 
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	h := handler.NewHandler(logger, nil, nil, nil, crewService)
+	h := handler.NewCrewHandler(logger, crewService)
 
 	body := handler.CreateCrewMemberRequest{
 		Name:           "John Snow",
@@ -159,7 +160,7 @@ func TestCrewHandler_Create_Returns422OnValidationFailure(t *testing.T) {
 				},
 			}
 			logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-			h := handler.NewHandler(logger, nil, nil, nil, crewService)
+			h := handler.NewCrewHandler(logger, crewService)
 
 			bodyBytes, err := json.Marshal(handler.CreateCrewMemberRequest{
 				Name:           "John Snow",
@@ -198,7 +199,7 @@ func TestCrewHandler_Create_Returns500OnUnexpectedError(t *testing.T) {
 	}
 
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	h := handler.NewHandler(logger, nil, nil, nil, crewService)
+	h := handler.NewCrewHandler(logger, crewService)
 
 	body := handler.CreateCrewMemberRequest{
 		Name:           "John Snow",

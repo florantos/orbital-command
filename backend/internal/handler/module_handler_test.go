@@ -40,7 +40,7 @@ func TestModuleHandler_Create_Returns201OnSuccess(t *testing.T) {
 	}
 
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	h := handler.NewHandler(logger, nil, moduleService, nil, nil)
+	h := handler.NewModuleHandler(logger, moduleService)
 
 	body := handler.CreateModuleRequest{
 		Name:        "Navigation Array",
@@ -71,7 +71,7 @@ func TestModuleHandler_Create_Returns201OnSuccess(t *testing.T) {
 
 func TestModuleHandler_Create_Returns400OnMalformedJSON(t *testing.T) {
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	h := handler.NewHandler(logger, nil, nil, nil, nil)
+	h := handler.NewModuleHandler(logger, nil)
 
 	body := `{ Name: "Navigation Array, Description: "Controls navigation systems`
 
@@ -102,7 +102,7 @@ func TestModuleHandler_Create_Returns409OnDuplicateName(t *testing.T) {
 	}
 
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	h := handler.NewHandler(logger, nil, moduleRepo, nil, nil)
+	h := handler.NewModuleHandler(logger, moduleRepo)
 
 	body := handler.CreateModuleRequest{
 		Name:        "Navigation Array",
@@ -136,7 +136,7 @@ func TestModuleHandler_Create_Returns500OnUnexpectedError(t *testing.T) {
 	}
 
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	h := handler.NewHandler(logger, nil, moduleRepo, nil, nil)
+	h := handler.NewModuleHandler(logger, moduleRepo)
 
 	body := handler.CreateModuleRequest{
 		Name:        "Navigation Array",
@@ -191,7 +191,7 @@ func TestModuleHandler_Create_Returns422OnValidationFailure(t *testing.T) {
 			}
 			logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 
-			h := handler.NewHandler(logger, nil, moduleService, nil, nil)
+			h := handler.NewModuleHandler(logger, moduleService)
 
 			bodyBytes, err := json.Marshal(handler.CreateModuleRequest{
 				Name:        "Solar Array",
@@ -230,7 +230,7 @@ func TestModuleHandler_ReadAll_Returns500OnUnexpectedError(t *testing.T) {
 	}
 
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	h := handler.NewHandler(logger, nil, moduleRepo, nil, nil)
+	h := handler.NewModuleHandler(logger, moduleRepo)
 
 	r := httptest.NewRequest(http.MethodGet, "/modules", nil)
 	w := httptest.NewRecorder()
@@ -275,7 +275,7 @@ func TestModulesHandler_ReadAll_Returns200(t *testing.T) {
 			}
 
 			logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-			h := handler.NewHandler(logger, nil, moduleService, nil, nil)
+			h := handler.NewModuleHandler(logger, moduleService)
 
 			r := httptest.NewRequest(http.MethodGet, "/modules", nil)
 			w := httptest.NewRecorder()
