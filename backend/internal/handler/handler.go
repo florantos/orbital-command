@@ -1,38 +1,11 @@
 package handler
 
 import (
-	"context"
 	"encoding/json"
-	"log/slog"
 	"net/http"
 
-	"github.com/florantos/orbital-command/internal/database"
 	"github.com/florantos/orbital-command/internal/domain"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
-
-type AuditEventRepository interface {
-	Create(ctx context.Context, db database.DBTX, event *domain.AuditEvent) error
-	ReadAll(ctx context.Context, db database.DBTX) ([]domain.AuditEvent, error)
-}
-
-type Handler struct {
-	logger         *slog.Logger
-	pool           *pgxpool.Pool
-	moduleService  ModuleService
-	auditEventRepo AuditEventRepository
-	crewService    CrewService
-}
-
-func NewHandler(logger *slog.Logger, pool *pgxpool.Pool, moduleService ModuleService, auditEventRepo AuditEventRepository, crewService CrewService) *Handler {
-	return &Handler{
-		logger:         logger,
-		pool:           pool,
-		moduleService:  moduleService,
-		auditEventRepo: auditEventRepo,
-		crewService:    crewService,
-	}
-}
 
 type ErrorResponse struct {
 	Error  string            `json:"error"`

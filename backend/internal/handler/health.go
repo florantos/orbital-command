@@ -2,14 +2,25 @@ package handler
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 )
+
+type HealthHandler struct {
+	logger *slog.Logger
+}
+
+func NewHealthHandler(logger *slog.Logger) *HealthHandler {
+	return &HealthHandler{
+		logger: logger,
+	}
+}
 
 type healthResponse struct {
 	Status string `json:"status"`
 }
 
-func (h *Handler) Health(w http.ResponseWriter, r *http.Request) {
+func (h *HealthHandler) Health(w http.ResponseWriter, r *http.Request) {
 	resBody, err := json.Marshal(healthResponse{Status: "ok"})
 	if err != nil {
 		h.logger.Error("failed to encode health response", "error", err)

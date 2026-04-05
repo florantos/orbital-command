@@ -1,10 +1,29 @@
 package handler
 
 import (
+	"context"
+	"log/slog"
 	"net/http"
 	"time"
+
+	"github.com/florantos/orbital-command/internal/domain"
 )
 
+type AuditEventHandler struct {
+	logger            *slog.Logger
+	auditEventService AuditEventService
+}
+
+func NewAuditHandler(logger *slog.Logger, auditEventService AuditEventService) *AuditEventHandler {
+	return &AuditEventHandler{
+		logger:            logger,
+		auditEventService: auditEventService,
+	}
+}
+
+type AuditEventService interface {
+	ReadAll(ctx context.Context) ([]domain.AuditEvent, error)
+}
 type AuditEventResponse struct {
 	ID         string    `json:"id"`
 	Action     string    `json:"action"`
@@ -18,10 +37,10 @@ type ReadAllAuditEventsResponse struct {
 	AuditEvents []AuditEventResponse `json:"auditEvents"`
 }
 
-func (h *Handler) ReadAllAuditEvents(w http.ResponseWriter, r *http.Request) {
+func (h *AuditEventHandler) ReadAllAuditEvents(w http.ResponseWriter, r *http.Request) {
 	h.logger.Info("reading all audit events")
 
-	events, err := h.auditEventRepo.ReadAll(r.Context(), h.pool)
+	events, err := h.auditEventService.ReadAll(r.Context())
 	if err != nil {
 		h.logger.Error("failed to read all audit events", "error", err)
 		writeError(w, http.StatusInternalServerError, "internal server error")
@@ -51,5 +70,4 @@ func (h *Handler) ReadAllAuditEvents(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "internal server error")
 		return
 	}
-
 }

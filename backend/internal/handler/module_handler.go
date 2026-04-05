@@ -5,10 +5,23 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"log/slog"
 	"net/http"
 
 	"github.com/florantos/orbital-command/internal/domain"
 )
+
+type ModuleHandler struct {
+	logger        *slog.Logger
+	moduleService ModuleService
+}
+
+func NewModuleHandler(logger *slog.Logger, moduleService ModuleService) *ModuleHandler {
+	return &ModuleHandler{
+		logger:        logger,
+		moduleService: moduleService,
+	}
+}
 
 type ModuleService interface {
 	Create(ctx context.Context, name, description string) (*domain.Module, error)
@@ -31,7 +44,7 @@ type ReadAllModulesResponse struct {
 	Modules []ModuleResponse `json:"modules"`
 }
 
-func (h *Handler) CreateModule(w http.ResponseWriter, r *http.Request) {
+func (h *ModuleHandler) CreateModule(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		h.logger.Error("failed to read request body", "error", err)
@@ -80,7 +93,7 @@ func (h *Handler) CreateModule(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) ReadAllModules(w http.ResponseWriter, r *http.Request) {
+func (h *ModuleHandler) ReadAllModules(w http.ResponseWriter, r *http.Request) {
 	h.logger.Info("reading all modules")
 
 	modules, err := h.moduleService.ReadAll(r.Context())
