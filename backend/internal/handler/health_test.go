@@ -13,7 +13,7 @@ import (
 
 func TestHealth_ReturnsOK(t *testing.T) {
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	h := handler.NewHandler(logger, nil, nil, nil, nil)
+	h := handler.NewHealthHandler(logger)
 	r := httptest.NewRequest(http.MethodGet, "/health", nil)
 	w := httptest.NewRecorder()
 
