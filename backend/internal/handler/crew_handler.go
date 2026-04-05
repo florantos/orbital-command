@@ -5,10 +5,23 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"log/slog"
 	"net/http"
 
 	"github.com/florantos/orbital-command/internal/domain"
 )
+
+type CrewHandler struct {
+	logger      *slog.Logger
+	crewService CrewService
+}
+
+func NewCrewHandler(logger *slog.Logger, crewService CrewService) *CrewHandler {
+	return &CrewHandler{
+		logger:      logger,
+		crewService: crewService,
+	}
+}
 
 type CrewService interface {
 	Create(ctx context.Context, name string, role domain.Role, qualifications []domain.Capability) (*domain.CrewMember, error)
@@ -27,7 +40,7 @@ type CrewResponse struct {
 	Qualifications []string `json:"qualifications"`
 }
 
-func (h *Handler) CreateCrewMember(w http.ResponseWriter, r *http.Request) {
+func (h *CrewHandler) CreateCrewMember(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		h.logger.Error("failed to read request body", "error", err)
