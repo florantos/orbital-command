@@ -17,13 +17,18 @@ import (
 )
 
 type mockAuditEventRepo struct {
-	createFn func(ctx context.Context, db database.DBTX, event *domain.AuditEvent) error
+	createFn  func(ctx context.Context, db database.DBTX, event *domain.AuditEvent) error
+	readAllFn func(ctx context.Context, db database.DBTX) ([]domain.AuditEvent, error)
 }
 
 func (m *mockAuditEventRepo) Create(ctx context.Context, db database.DBTX, event *domain.AuditEvent) error {
 	return m.createFn(ctx, db, event)
 }
 
+func (m *mockAuditEventRepo) ReadAll(ctx context.Context, db database.DBTX) ([]domain.AuditEvent, error) {
+	return m.readAllFn(ctx, db)
+
+}
 func TestCrewService_Create_Success(t *testing.T) {
 	crewRepo := repository.NewCrewRepo()
 	auditRepo := repository.NewAuditEventRepo()
