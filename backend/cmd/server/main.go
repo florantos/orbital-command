@@ -32,25 +32,29 @@ func main() {
 	defer pool.Close()
 
 	moduleRepo := repository.NewModuleRepo()
-	auditRepo := repository.NewAuditEventRepo()
 	crewRepo := repository.NewCrewRepo()
+	auditRepo := repository.NewAuditEventRepo()
 
-	crewService := service.NewCrewService(pool, logger, crewRepo, auditRepo)
 	moduleService := service.NewModuleService(pool, logger, moduleRepo, auditRepo)
+	crewService := service.NewCrewService(pool, logger, crewRepo, auditRepo)
+	auditService := service.NewAuditEventService(pool, logger, auditRepo)
 
-	h := handler.NewHandler(logger, pool, moduleService, auditRepo, crewService)
+	healthHandler := handler.NewHealthHandler(logger)
+	moduleHandler := handler.NewModuleHandler(logger, moduleService)
+	crewHandler := handler.NewCrewHandler(logger, crewService)
+	auditHandler := handler.NewAuditHandler(logger, auditService)
 
 	r := chi.NewRouter()
 	r.Use(middleware.CORS(cfg.CORSAllowedOrigin))
 
-	r.Get("/health", h.Health)
+	r.Get("/health", healthHandler.Health)
 
-	r.Post("/modules", h.CreateModule)
-	r.Get("/modules", h.ReadAllModules)
+	r.Post("/modules", moduleHandler.CreateModule)
+	r.Get("/modules", moduleHandler.ReadAllModules)
 
-	r.Post("/crew", h.CreateCrewMember)
+	r.Post("/crew", crewHandler.CreateCrewMember)
 
-	r.Get("/audit-events", h.ReadAllAuditEvents)
+	r.Get("/audit-events", auditHandler.ReadAllAuditEvents)
 
 	logger.Info("Initializing server...", "port", cfg.Port)
 
