@@ -14,6 +14,7 @@ import (
 
 type CrewRepository interface {
 	Create(ctx context.Context, db database.DBTX, cm *domain.CrewMember) (*domain.CrewMember, error)
+	ReadAll(ctx context.Context, db database.DBTX) ([]domain.CrewMember, error)
 }
 
 type CrewService struct {
@@ -60,4 +61,12 @@ func (s *CrewService) Create(ctx context.Context, name string, role domain.Role,
 		return nil, fmt.Errorf("create crew member: %w", err)
 	}
 	return created, nil
+}
+
+func (s *CrewService) ReadAll(ctx context.Context) ([]domain.CrewMember, error) {
+	crew, err := s.crewRepo.ReadAll(ctx, s.pool)
+	if err != nil {
+		return nil, fmt.Errorf("read all crew members: %w", err)
+	}
+	return crew, nil
 }
