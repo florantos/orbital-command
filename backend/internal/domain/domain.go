@@ -31,7 +31,7 @@ const (
 	CapabilityHullMonitoring      Capability = "hull-monitoring"
 	CapabilityWaterRecycling      Capability = "water-recycling"
 	CapabilityPowerGeneration     Capability = "power-generation"
-	CapabilityPowerDistribution   Capability = "power-distubution"
+	CapabilityPowerDistribution   Capability = "power-distribution"
 	CapabilityThermalRegulation   Capability = "thermal-regulation"
 	CapabilityAtmosphereRecycling Capability = "atmosphere-recycling"
 )
