@@ -40,3 +40,29 @@ func TestCrewRepo_Create_ReturnsErrorOnDuplicateName(t *testing.T) {
 	_, err = repo.Create(context.Background(), tx, cm)
 	assert.ErrorIs(t, err, domain.ErrDuplicateCrewMemberName)
 }
+
+func TestCrewRepo_ReadAll_ReturnsAllCrewMembers(t *testing.T) {
+	tx := testutil.NewTestTx(t, testPool)
+	repo := repository.NewCrewRepo()
+
+	crew := make([]*domain.CrewMember, 10)
+	for i := range crew {
+		crew[i] = testutil.NewTestCrewMember(t)
+	}
+	testutil.SeedCrewMembers(t, tx, crew)
+
+	result, err := repo.ReadAll(context.Background(), tx)
+	require.NoError(t, err)
+
+	assert.Len(t, result, 10)
+
+}
+func TestCrewRepo_ReadAll_ReturnsEmptyArrayWhenNoCrewMembers(t *testing.T) {
+	repo := repository.NewCrewRepo()
+
+	crew, err := repo.ReadAll(context.Background(), testPool)
+	require.NoError(t, err)
+
+	assert.NotNil(t, crew)
+	assert.Len(t, crew, 0)
+}
