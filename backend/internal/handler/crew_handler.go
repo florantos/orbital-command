@@ -25,6 +25,7 @@ func NewCrewHandler(logger *slog.Logger, crewService CrewService) *CrewHandler {
 
 type CrewService interface {
 	Create(ctx context.Context, name string, role domain.Role, qualifications []domain.Capability) (*domain.CrewMember, error)
+	ReadAll(ctx context.Context) ([]domain.CrewMember, error)
 }
 
 type CreateCrewMemberRequest struct {
@@ -38,6 +39,10 @@ type CrewResponse struct {
 	Name           string   `json:"name"`
 	Role           string   `json:"role"`
 	Qualifications []string `json:"qualifications"`
+}
+
+type ReadAllCrewResponse struct {
+	Crew []CrewResponse `json:"crew"`
 }
 
 func (h *CrewHandler) CreateCrewMember(w http.ResponseWriter, r *http.Request) {
@@ -91,6 +96,44 @@ func (h *CrewHandler) CreateCrewMember(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := writeJSON(w, http.StatusCreated, resp); err != nil {
+		h.logger.Error("failed to marshal response", "error", err)
+		writeError(w, http.StatusInternalServerError, "internal server error")
+		return
+	}
+}
+
+func (h *CrewHandler) ReadAllCrewMembers(w http.ResponseWriter, r *http.Request) {
+	h.logger.Info("reading all crew members")
+
+	crew, err := h.crewService.ReadAll(r.Context())
+	if err != nil {
+		h.logger.Error("failed to read all crew members", "error", err)
+		writeError(w, http.StatusInternalServerError, "internal server error")
+		return
+	}
+
+	resp := ReadAllCrewResponse{
+		Crew: []CrewResponse{},
+	}
+
+	for _, cm := range crew {
+		quals := make([]string, len(cm.Qualifications))
+
+		for i, q := range cm.Qualifications {
+			quals[i] = string(q)
+		}
+
+		resp.Crew = append(resp.Crew, CrewResponse{
+			ID:             cm.ID,
+			Name:           cm.Name,
+			Role:           string(cm.Role),
+			Qualifications: quals,
+		})
+	}
+	h.logger.Info("crew read", "count", len(crew))
+
+	err = writeJSON(w, http.StatusOK, resp)
+	if err != nil {
 		h.logger.Error("failed to marshal response", "error", err)
 		writeError(w, http.StatusInternalServerError, "internal server error")
 		return
