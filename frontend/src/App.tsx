@@ -1,6 +1,6 @@
-import { ModulePage } from "./features/modules";
+import { AdminPage } from "./pages/Admin/AdminPage";
 
 function App() {
-  return <ModulePage />;
+  return <AdminPage />;
 }
 export default App;
