@@ -3,7 +3,7 @@ import { useState } from "react";
 
 import { Button } from "../../components/Button/Button";
 import { ModuleForm } from "./ModuleForm";
-import styles from "./ModulePage.module.css";
+import styles from "./ModulePanel.module.css";
 import { useReadModules } from "./useReadModules";
 
 function ModulesPanel() {
