@@ -15,7 +15,6 @@ function CrewPanel() {
     <>
       <div className={styles.header}>
         <span className={styles.count}>{`${String(crew.length)} Crew Members`}</span>
-        <span className={styles.count}></span>
         <Dialog.Root open={open} onOpenChange={setOpen}>
           <Dialog.Trigger asChild>
             <Button mini>+ Register Crew Member</Button>
@@ -69,7 +68,7 @@ function CrewPanel() {
           <div className={styles.cardError}>
             <div className={styles.cardErrorTitle}>Connection Error</div>
             <div className={styles.cardErrorDescription}>
-              Unable to retrieve module data from station core. Retrying...
+              Unable to retrieve crew data from station core. Retrying...
             </div>
             <button
               type="button"
