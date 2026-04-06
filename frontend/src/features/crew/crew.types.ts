@@ -1,4 +1,4 @@
-type Role = "engineer" | "tactician" | "specialist";
+type Role = "engineer" | "technician" | "specialist";
 
 type Capability =
   | "docking"
