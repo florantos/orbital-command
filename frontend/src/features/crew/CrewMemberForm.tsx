@@ -29,7 +29,6 @@ const CrewMemberForm = ({ onSuccess, onCancel }: CrewMemberFormProps) => {
 
   function handleQualificationsValueChange(value: string[]) {
     setQualifications(value);
-    console.log("the val", value);
   }
 
   async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
@@ -62,7 +61,6 @@ const CrewMemberForm = ({ onSuccess, onCancel }: CrewMemberFormProps) => {
 
     const crewMember = await createCrewMember(name, role, qualifications);
 
-    console.log("the crew", crewMember);
     if (crewMember) {
       setName("");
       setRole("");
@@ -100,7 +98,7 @@ const CrewMemberForm = ({ onSuccess, onCancel }: CrewMemberFormProps) => {
         Role
       </label>
       <ToggleGroup.Root
-        id="qualifications"
+        id="role"
         className={styles.toggleGroup}
         type="single"
         aria-label="Crew Member Role"
@@ -111,7 +109,7 @@ const CrewMemberForm = ({ onSuccess, onCancel }: CrewMemberFormProps) => {
           <div>Engineer</div>
         </ToggleGroup.Item>
         <ToggleGroup.Item value="technician" aria-label="technician" className={styles.toggleItem}>
-          <div>technician</div>
+          <div>Technician</div>
         </ToggleGroup.Item>
         <ToggleGroup.Item value="specialist" aria-label="specialist" className={styles.toggleItem}>
           <div>Specialist</div>
