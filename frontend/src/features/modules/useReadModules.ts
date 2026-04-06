@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { API_BASE_URL } from "../../lib/api";
-import type { Module, ModuleError } from "./module.types";
+import { API_BASE_URL, type ApiError } from "../../lib/api";
+import type { Module } from "./module.types";
 
 interface ReadAllModulesResponse {
   modules: Module[];
@@ -23,10 +23,10 @@ function useReadModules() {
         method: "GET",
         signal,
       });
-      const data = (await res.json()) as ReadAllModulesResponse | ModuleError;
+      const data = (await res.json()) as ReadAllModulesResponse | ApiError;
 
       if (!res.ok) {
-        setError((data as ModuleError).error);
+        setError((data as ApiError).error);
         return;
       }
 
