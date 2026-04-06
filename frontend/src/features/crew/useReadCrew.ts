@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { API_BASE_URL, type ApiError } from "../../lib/api";
 import type { CrewMember } from "./crew.types";
 
-interface ReadAllCrewRespose {
+interface ReadAllCrewResponse {
   crew: CrewMember[];
 }
 
@@ -23,14 +23,14 @@ function useReadCrew() {
         method: "GET",
         signal,
       });
-      const data = (await res.json()) as ReadAllCrewRespose | ApiError;
+      const data = (await res.json()) as ReadAllCrewResponse | ApiError;
 
       if (!res.ok) {
         setError((data as ApiError).error);
         return;
       }
 
-      setCrew((data as ReadAllCrewRespose).crew);
+      setCrew((data as ReadAllCrewResponse).crew);
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") return;
       setError("Network error - please try again");
