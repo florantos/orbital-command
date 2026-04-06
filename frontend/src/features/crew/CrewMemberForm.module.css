@@ -1,0 +1,86 @@
+.input {
+  font-family: var(--font-head);
+  display: block;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(80, 180, 255, 0.12);
+  border-radius: 2px;
+  color: var(--text-bright);
+  outline: none;
+  width: 100%;
+  transition: all var(--transition-base);
+
+  &:focus {
+    border-color: var(--color-cyan-mid);
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.08);
+  }
+}
+
+.label {
+  font-family: var(--font-data);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-mid);
+  margin-bottom: 6px;
+  display: block;
+  margin-top: 16px;
+}
+
+.error {
+  font-family: var(--font-data);
+  color: var(--color-red);
+  font-size: 10px;
+  margin: 4px;
+}
+
+.errorButtons {
+  composes: error;
+  margin-bottom: 4px;
+}
+
+.formTitle {
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-bright);
+  margin-bottom: 20px;
+  letter-spacing: 0.04em;
+}
+.buttonRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.toggleGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.toggleItem {
+  background: rgba(8, 24, 48, 0.3);
+  border: 1px solid rgba(80, 180, 255, 0.08);
+  color: var(--text-dim);
+  font-family: var(--font-data);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 4px 10px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all var(--transition-base);
+
+  &[data-state="on"] {
+    background-color: var(--color-cyan-dim);
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    color: var(--color-cyan);
+  }
+}
