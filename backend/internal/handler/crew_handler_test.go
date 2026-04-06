@@ -19,12 +19,18 @@ import (
 )
 
 type mockCrewService struct {
-	createFn func(ctx context.Context, name string, role domain.Role, qualifications []domain.Capability) (*domain.CrewMember, error)
+	createFn  func(ctx context.Context, name string, role domain.Role, qualifications []domain.Capability) (*domain.CrewMember, error)
+	readAllFn func(ctx context.Context) ([]domain.CrewMember, error)
 }
 
 func (m *mockCrewService) Create(ctx context.Context, name string, role domain.Role, qualifications []domain.Capability) (*domain.CrewMember, error) {
 	return m.createFn(ctx, name, role, qualifications)
 }
+
+func (m *mockCrewService) ReadAll(ctx context.Context) ([]domain.CrewMember, error) {
+	return m.readAllFn(ctx)
+}
+
 func TestCrewHandler_Create_Returns201OnSuccess(t *testing.T) {
 	returnedCrewMember := testutil.NewTestCrewMember(t)
 	crewService := &mockCrewService{
@@ -224,4 +230,52 @@ func TestCrewHandler_Create_Returns500OnUnexpectedError(t *testing.T) {
 	err = json.Unmarshal(w.Body.Bytes(), &response)
 	require.NoError(t, err)
 	assert.Equal(t, "internal server error", response.Error)
+}
+
+func TestCrewHandler_ReadAll_Returns200(t *testing.T) {
+	tests := []struct {
+		name  string
+		input []domain.CrewMember
+	}{
+		{
+			name: "returns crew on success",
+			input: []domain.CrewMember{
+				*testutil.NewTestCrewMember(t),
+				*testutil.NewTestCrewMember(t),
+			},
+		},
+		{
+			name:  "returns empty slice on success",
+			input: []domain.CrewMember{},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			crewService := &mockCrewService{
+				readAllFn: func(ctx context.Context) ([]domain.CrewMember, error) {
+					return tt.input, nil
+				},
+			}
+
+			logger := slog.New(slog.NewTextHandler(io.Discard, nil))
+			h := handler.NewCrewHandler(logger, crewService)
+
+			r := httptest.NewRequest(http.MethodGet, "/crew", nil)
+			w := httptest.NewRecorder()
+
+			h.ReadAllCrewMembers(w, r)
+
+			res := w.Result()
+			assert.Equal(t, http.StatusOK, res.StatusCode)
+
+			var response handler.ReadAllCrewResponse
+			err := json.Unmarshal(w.Body.Bytes(), &response)
+			require.NoError(t, err)
+
+			assert.NotNil(t, response.Crew)
+			assert.Len(t, response.Crew, len(tt.input))
+		})
+	}
+
 }
