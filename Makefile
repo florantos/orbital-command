@@ -44,7 +44,7 @@ clean:
 	docker compose down -v
 
 test:
-	cd backend && go test ./...
+	cd backend && go test -p 1 ./...
 
 test-filter:
 	cd backend && go test ./... -run $(FILTER) -v
