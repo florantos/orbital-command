@@ -47,11 +47,41 @@
 }
 
 .card {
+  background-color: var(--surface-glass);
+  border: 1px solid var(--surface-panel-border);
+  border-radius: 2px;
+  padding: var(--space-4);
+  gap: 8px;
+}
+
+.cardName {
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.cardRole {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-left: 8px;
+}
+
+.cardQualifications {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: var(--surface-panel);
-  padding: 14px;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.cardQualification {
+  composes: toggleItem from "./CrewMemberForm.module.css";
+  color: var(--text-mid);
+  background-color: rgba(80, 180, 255, 0.06);
+  padding: 2px 7px;
 }
 
 .cardLoading {
@@ -136,57 +166,6 @@
   text-transform: uppercase;
   color: var(--color-red);
   border-color: rgba(255, 61, 90, 0.2);
-}
-
-.cardName {
-  color: var(--text-bright);
-  font-family: var(--font-head);
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.cardDescription {
-  color: var(--text-mid);
-  font-size: 12px;
-}
-
-.cardHealthState {
-  font-family: var(--font-data);
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-.healthOperational {
-  color: var(--color-health-operational);
-}
-.healthDegraded {
-  color: var(--color-health-degraded);
-}
-.healthCritical {
-  color: var(--color-health-critical);
-}
-.healthUnresponsive {
-  color: var(--color-health-unresponsive);
-}
-.healthOffline {
-  color: var(--color-health-offline);
-}
-
-.healthBorderOperational {
-  border-left: 2px solid var(--color-health-operational);
-}
-.healthBorderDegraded {
-  border-left: 2px solid var(--color-health-degraded);
-}
-.healthBorderCritical {
-  border-left: 2px solid var(--color-health-critical);
-}
-.healthBorderUnresponsive {
-  border-left: 2px solid var(--color-health-unresponsive);
-}
-.healthBorderOffline {
-  border-left: 2px solid var(--color-health-offline);
 }
 
 @keyframes shimmer {
