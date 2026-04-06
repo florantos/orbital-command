@@ -107,7 +107,7 @@ func SeedCrewMembers(t *testing.T, db database.DBTX, crewMembers []*domain.CrewM
 
 	`
 	capQuery := `
-		INSERT INTO crew_capabilities (name, crew_id)
+		INSERT INTO crew_qualifications (name, crew_id)
 		VALUES ($1, $2)
 	`
 

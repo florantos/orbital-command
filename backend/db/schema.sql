@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS crew (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS crew_capabilities (
+CREATE TABLE IF NOT EXISTS crew_qualifications (
     id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name       TEXT NOT NULL,
     crew_id    UUID  NOT NULL REFERENCES crew(id) ON DELETE CASCADE,

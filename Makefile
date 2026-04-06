@@ -26,10 +26,10 @@ db-setup-test:
 	docker exec -i orbital-command-postgres-1 psql -U $(POSTGRES_USER) -d $(POSTGRES_DB)_test < backend/db/schema.sql
 
 db-truncate:
-	docker exec -i orbital-command-postgres-1 psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "TRUNCATE TABLE crew_capabilities, crew, audit_events, modules RESTART IDENTITY CASCADE;"
+	docker exec -i orbital-command-postgres-1 psql -U $(POSTGRES_USER) -d $(POSTGRES_DB) -c "TRUNCATE TABLE crew_qualifications, crew, audit_events, modules RESTART IDENTITY CASCADE;"
 
 db-truncate-test:
-	docker exec -i orbital-command-postgres-1 psql -U $(POSTGRES_USER) -d $(POSTGRES_DB)_test -c "TRUNCATE TABLE crew_capabilities, crew, audit_events, modules RESTART IDENTITY CASCADE;"
+	docker exec -i orbital-command-postgres-1 psql -U $(POSTGRES_USER) -d $(POSTGRES_DB)_test -c "TRUNCATE TABLE crew_qualifications, crew, audit_events, modules RESTART IDENTITY CASCADE;"
 
 dev:
 	docker compose up
