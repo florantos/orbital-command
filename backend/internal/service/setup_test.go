@@ -19,7 +19,7 @@ func TestMain(m *testing.M) {
 	}
 
 	_, err = testPool.Exec(context.Background(),
-		"TRUNCATE TABLE crew_capabilities, crew, audit_events, modules RESTART IDENTITY CASCADE")
+		"TRUNCATE TABLE crew_qualifications, crew, audit_events, modules RESTART IDENTITY CASCADE")
 	if err != nil {
 		log.Fatalf("failed to truncate test database: %v", err)
 	}
