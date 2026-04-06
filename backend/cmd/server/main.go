@@ -53,6 +53,7 @@ func main() {
 	r.Get("/modules", moduleHandler.ReadAllModules)
 
 	r.Post("/crew", crewHandler.CreateCrewMember)
+	r.Get("/crew", crewHandler.ReadAllCrewMembers)
 
 	r.Get("/audit-events", auditHandler.ReadAllAuditEvents)
 
