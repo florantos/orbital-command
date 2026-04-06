@@ -14,28 +14,29 @@ interface ModuleFormProps {
 const ModuleForm = ({ onSuccess, onCancel }: ModuleFormProps) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+
   const [nameError, setNameError] = useState<string | null>(null);
   const [descriptionError, setDescriptionError] = useState<string | null>(null);
 
   const { createModule, error, loading } = useCreateModule();
 
-  function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
 
     let valid = true;
 
     if (!name.trim()) {
-      setNameError("Name is required");
+      setNameError("name is required");
       valid = false;
     } else if (name.trim().length > 100) {
-      setNameError("Name must be 100 characters or less");
+      setNameError("name must be 100 characters or less");
       valid = false;
     } else {
       setNameError(null);
     }
 
     if (!description.trim()) {
-      setDescriptionError("Description is required");
+      setDescriptionError("description is required");
       valid = false;
     } else {
       setDescriptionError(null);
@@ -43,16 +44,19 @@ const ModuleForm = ({ onSuccess, onCancel }: ModuleFormProps) => {
 
     if (!valid) return;
 
-    void createModule(name, description).then((module) => {
-      if (module) {
-        setName("");
-        setDescription("");
-        setNameError(null);
-        setDescriptionError(null);
-        onSuccess(module);
-      }
-    });
+    const module = await createModule(name, description);
+
+    if (module) {
+      setName("");
+      setDescription("");
+
+      setNameError(null);
+      setDescriptionError(null);
+
+      onSuccess(module);
+    }
   }
+
   return (
     <form onSubmit={handleSubmit}>
       <Dialog.Title className={styles.formTitle}>Register Module</Dialog.Title>
@@ -70,7 +74,7 @@ const ModuleForm = ({ onSuccess, onCancel }: ModuleFormProps) => {
           setName(e.target.value);
         }}
       />
-      {nameError && <p className={styles.error}>{nameError}</p>}
+      {(nameError ?? error?.fields?.name) && <p className={styles.error}>{nameError ?? error?.fields?.name}</p>}
 
       <label htmlFor="description" className={styles.label}>
         Description
@@ -83,9 +87,11 @@ const ModuleForm = ({ onSuccess, onCancel }: ModuleFormProps) => {
           setDescription(e.target.value);
         }}
       />
-      {descriptionError && <p className={styles.error}>{descriptionError}</p>}
+      {(descriptionError ?? error?.fields?.description) && (
+        <p className={styles.error}>{descriptionError ?? error?.fields?.description}</p>
+      )}
 
-      {error && <p className={styles.errorButtons}>{error}</p>}
+      {error && <p className={styles.errorButtons}>{error.error}</p>}
       <div className={styles.buttonRow}>
         <Button type="submit" loading={loading}>
           {loading ? "Saving..." : "Register"}

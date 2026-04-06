@@ -6,7 +6,7 @@ import { ModuleForm } from "./ModuleForm";
 import styles from "./ModulePage.module.css";
 import { useReadModules } from "./useReadModules";
 
-function ModulePage() {
+function ModulesPanel() {
   const [open, setOpen] = useState(false);
 
   const { modules, error, loading, refetch } = useReadModules();
@@ -120,4 +120,4 @@ function ModulePage() {
   );
 }
 
-export { ModulePage };
+export { ModulesPanel };

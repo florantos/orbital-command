@@ -6,7 +6,3 @@ export interface Module {
   description: string;
   healthState: HealthState;
 }
-
-export interface ModuleError {
-  error: string;
-}

@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-import { API_BASE_URL } from "../../lib/api";
-import type { Module, ModuleError } from "./module.types";
+import { API_BASE_URL, type ApiError } from "../../lib/api";
+import type { Module } from "./module.types";
 
 function useCreateModule() {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ApiError | null>(null);
 
   const createModule = async (name: string, description: string): Promise<Module | null> => {
     setLoading(true);
@@ -20,17 +20,17 @@ function useCreateModule() {
         body: JSON.stringify({ name, description }),
       });
 
-      const data = (await res.json()) as Module | ModuleError;
+      const data = (await res.json()) as Module | ApiError;
 
       if (!res.ok) {
-        const errData = data as ModuleError;
-        setError(errData.error);
+        const errData = data as ApiError;
+        setError(errData);
         return null;
       }
 
       return data as Module;
     } catch {
-      setError("Network error — please try again");
+      setError({ error: "Network error — please try again" });
       return null;
     } finally {
       setLoading(false);
