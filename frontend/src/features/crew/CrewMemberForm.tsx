@@ -140,8 +140,8 @@ const CrewMemberForm = ({ onSuccess, onCancel }: CrewMemberFormProps) => {
         <ToggleGroup.Item value="water-recycling" aria-label="water-recycling" className={styles.toggleItem}>
           <div>water-recycling</div>
         </ToggleGroup.Item>
-        <ToggleGroup.Item value="power-distrubtion" aria-label="power-distrubtion" className={styles.toggleItem}>
-          <div>power-distrubtion</div>
+        <ToggleGroup.Item value="power-distribution" aria-label="power-distribution" className={styles.toggleItem}>
+          <div>power-distribution</div>
         </ToggleGroup.Item>
         <ToggleGroup.Item value="thermal-regulation" aria-label="thermal-regulation" className={styles.toggleItem}>
           <div>thermal-regulation</div>
