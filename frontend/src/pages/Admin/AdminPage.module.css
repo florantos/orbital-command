@@ -1,0 +1,23 @@
+.adminTabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: var(--space-5);
+}
+
+.adminTab {
+  font-family: var(--font-data);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  padding: 6px 14px;
+  border-radius: 2px;
+  transition: all var(--transition-base);
+  background: rgba(8, 24, 48, 0.3);
+  border: 1px solid rgba(80, 180, 255, 0.08);
+  color: var(--text-dim);
+  cursor: pointer;
+  &[data-state="active"] {
+    background: var(--color-cyan-dim);
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    color: var(--color-cyan);
+  }
+}
