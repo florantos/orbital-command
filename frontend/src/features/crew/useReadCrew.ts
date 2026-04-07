@@ -41,6 +41,7 @@ function useReadCrew() {
 
   useEffect(() => {
     const controller = new AbortController();
+    controllerRef.current = controller;
     void load(controller.signal);
     return () => {
       controller.abort();
